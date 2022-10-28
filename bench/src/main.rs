@@ -1,11 +1,6 @@
-use std::{error::Error, time::Instant};
+use std::error::Error;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let start = Instant::now();
-
-    simpleinterp::run("")?;
-
-    println!("{}", start.elapsed().as_nanos());
-
+    bench::graph_results()?;
     Ok(())
 }

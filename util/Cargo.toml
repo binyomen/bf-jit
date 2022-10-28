@@ -1,7 +1,7 @@
 [package]
-name = 'simpleinterp'
+name = 'util'
 version = '0.1.0'
 edition = '2021'
 
 [dependencies]
-util = {path = '../../util'}
+plotters = '0.3.4'

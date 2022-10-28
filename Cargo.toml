@@ -1,2 +1,2 @@
 [workspace]
-members = ['bench', 'vms/simpleinterp']
+members = ['bench', 'util', 'vms/simpleinterp']
