@@ -2,7 +2,7 @@ use {
     plotters::{
         backend::BitMapBackend,
         chart::ChartBuilder,
-        coord::ranged1d::IntoSegmentedCoord,
+        coord::ranged1d::{IntoSegmentedCoord, SegmentValue},
         drawing::IntoDrawingArea,
         series::Histogram,
         style::{Color, RED, WHITE},
@@ -44,6 +44,14 @@ fn benchmark(run_function: impl RunFunction) -> Result<u128, BfError> {
     Ok(start.elapsed().as_millis())
 }
 
+fn segmented_value_to_inner<T>(value: &SegmentValue<T>) -> &T {
+    match value {
+        SegmentValue::Exact(t) => t,
+        SegmentValue::CenterOf(t) => t,
+        SegmentValue::Last => unreachable!(),
+    }
+}
+
 fn create_graph<const N: usize>(perf_millis: [ImplInfo; N]) -> Result<(), BfError> {
     let root = BitMapBackend::new(OUT_FILE_NAME, RESOLUTION).into_drawing_area();
     root.fill(&WHITE)?;
@@ -65,6 +73,7 @@ fn create_graph<const N: usize>(perf_millis: [ImplInfo; N]) -> Result<(), BfErro
         .x_desc("Implementation")
         .axis_desc_style(("sans-serif", 25))
         .label_style(("sans-serif", 20))
+        .x_label_formatter(&|value| segmented_value_to_inner(value).to_string())
         .draw()?;
 
     chart.draw_series(
