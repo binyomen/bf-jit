@@ -36,9 +36,17 @@
 <span id="36">36</span>
 <span id="37">37</span>
 <span id="38">38</span>
+<span id="39">39</span>
+<span id="40">40</span>
+<span id="41">41</span>
+<span id="42">42</span>
+<span id="43">43</span>
+<span id="44">44</span>
+<span id="45">45</span>
+<span id="46">46</span>
 </pre><pre class="rust"><code><span class="kw">use</span> {
     <span class="ident">plotters::drawing::DrawingAreaErrorKind</span>,
-    <span class="ident">std</span>::{<span class="ident">error::Error</span>, <span class="ident">fmt</span>, <span class="ident">num::TryFromIntError</span>},
+    <span class="ident">std</span>::{<span class="ident">error::Error</span>, <span class="ident">fmt</span>, <span class="ident">io</span>, <span class="ident">num::TryFromIntError</span>},
 };
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
@@ -46,6 +54,7 @@
     <span class="ident">Bf</span>(<span class="ident">String</span>),
     <span class="ident">DrawingArea</span>(<span class="ident">String</span>),
     <span class="ident">TryFromInt</span>(<span class="ident">TryFromIntError</span>),
+    <span class="ident">Io</span>(<span class="ident">io::Error</span>),
 }
 
 <span class="kw">impl</span> <span class="ident">fmt::Display</span> <span class="kw">for</span> <span class="ident">BfError</span> {
@@ -54,6 +63,7 @@
             <span class="ident"><span class="self">Self</span>::Bf</span>(<span class="ident">s</span>) =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;{s}&quot;</span>),
             <span class="ident"><span class="self">Self</span>::DrawingArea</span>(<span class="ident">s</span>) =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;{s}&quot;</span>),
             <span class="ident"><span class="self">Self</span>::TryFromInt</span>(<span class="ident">err</span>) =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;{err}&quot;</span>),
+            <span class="ident"><span class="self">Self</span>::Io</span>(<span class="ident">err</span>) =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;{err}&quot;</span>),
         }
     }
 }
@@ -72,6 +82,12 @@
 <span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">TryFromIntError</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">BfError</span> {
     <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">err</span>: <span class="ident">TryFromIntError</span>) -&gt; <span class="self">Self</span> {
         <span class="ident">BfError::TryFromInt</span>(<span class="ident">err</span>)
+    }
+}
+
+<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">io::Error</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">BfError</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">err</span>: <span class="ident">io::Error</span>) -&gt; <span class="self">Self</span> {
+        <span class="ident">BfError::Io</span>(<span class="ident">err</span>)
     }
 }
 </code></pre></div>

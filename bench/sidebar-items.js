@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":[["OUT_FILE_NAME",""],["RESOLUTION",""]],"fn":[["benchmark",""],["create_graph",""],["graph_results",""],["segmented_value_to_inner",""]],"struct":[["ImplInfo",""]],"trait":[["RunFunction",""]]};
+window.SIDEBAR_ITEMS = {"constant":[["RESOLUTION",""]],"fn":[["benchmark",""],["create_graph",""],["graph_results",""],["graph_results_for_file",""],["segmented_value_to_inner",""]],"struct":[["ImplInfo",""]],"trait":[["RunFunction",""]]};
