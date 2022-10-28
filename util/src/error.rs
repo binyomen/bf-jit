@@ -1,6 +1,6 @@
 use {
     plotters::drawing::DrawingAreaErrorKind,
-    std::{error::Error, fmt, num::TryFromIntError},
+    std::{error::Error, fmt, io, num::TryFromIntError},
 };
 
 #[derive(Debug)]
@@ -8,6 +8,7 @@ pub enum BfError {
     Bf(String),
     DrawingArea(String),
     TryFromInt(TryFromIntError),
+    Io(io::Error),
 }
 
 impl fmt::Display for BfError {
@@ -16,6 +17,7 @@ impl fmt::Display for BfError {
             Self::Bf(s) => write!(f, "{s}"),
             Self::DrawingArea(s) => write!(f, "{s}"),
             Self::TryFromInt(err) => write!(f, "{err}"),
+            Self::Io(err) => write!(f, "{err}"),
         }
     }
 }
@@ -34,5 +36,11 @@ where
 impl From<TryFromIntError> for BfError {
     fn from(err: TryFromIntError) -> Self {
         BfError::TryFromInt(err)
+    }
+}
+
+impl From<io::Error> for BfError {
+    fn from(err: io::Error) -> Self {
+        BfError::Io(err)
     }
 }
