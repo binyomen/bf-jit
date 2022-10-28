@@ -1,0 +1,4 @@
+(function() {var implementors = {};
+implementors["bench"] = [{"text":"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.64.0/core/marker/trait.Send.html\" title=\"trait core::marker::Send\">Send</a> for <a class=\"struct\" href=\"bench/struct.ImplInfo.html\" title=\"struct bench::ImplInfo\">ImplInfo</a>","synthetic":true,"types":["bench::ImplInfo"]}];
+implementors["util"] = [{"text":"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.64.0/core/marker/trait.Send.html\" title=\"trait core::marker::Send\">Send</a> for <a class=\"enum\" href=\"util/error/enum.BfError.html\" title=\"enum util::error::BfError\">BfError</a>","synthetic":true,"types":["util::error::BfError"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
