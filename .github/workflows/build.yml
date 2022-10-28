@@ -1,0 +1,144 @@
+name: build
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+        - os: ubuntu-latest
+          rust: stable
+          target: i686-unknown-linux-gnu
+        - os: ubuntu-latest
+          rust: stable
+          target: x86_64-unknown-linux-gnu
+        - os: ubuntu-latest
+          rust: stable
+          target: aarch64-unknown-linux-gnu
+        - os: ubuntu-latest
+          rust: nightly
+          target: i686-unknown-linux-gnu
+        - os: ubuntu-latest
+          rust: nightly
+          target: x86_64-unknown-linux-gnu
+        - os: ubuntu-latest
+          rust: nightly
+          target: aarch64-unknown-linux-gnu
+        - os: ubuntu-latest
+          rust: beta
+          target: i686-unknown-linux-gnu
+        - os: ubuntu-latest
+          rust: beta
+          target: x86_64-unknown-linux-gnu
+        - os: ubuntu-latest
+          rust: beta
+          target: aarch64-unknown-linux-gnu
+
+        - os: macos-latest
+          rust: stable
+          target: x86_64-apple-darwin
+        - os: macos-latest
+          rust: nightly
+          target: x86_64-apple-darwin
+        - os: macos-latest
+          rust: beta
+          target: x86_64-apple-darwin
+
+        - os: windows-latest
+          rust: stable
+          target: i686-pc-windows-msvc
+        - os: windows-latest
+          rust: stable
+          target: x86_64-pc-windows-msvc
+        - os: windows-latest
+          rust: nightly
+          target: i686-pc-windows-msvc
+        - os: windows-latest
+          rust: nightly
+          target: x86_64-pc-windows-msvc
+        - os: windows-latest
+          rust: beta
+          target: i686-pc-windows-msvc
+        - os: windows-latest
+          rust: beta
+          target: x86_64-pc-windows-msvc
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install ${{ matrix.rust }} rust
+      uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: ${{ matrix.rust }}
+        target: ${{ matrix.target }}
+        components: clippy
+        override: true
+
+    - name: Install cross
+      run: cargo install cross
+
+    - name: Debug build
+      run: cross build --target ${{ matrix.target }} --all-features -vv
+
+    - name: Release build
+      run: cross build --release --target ${{ matrix.target }} --all-features -vv
+
+    - name: Clippy
+      run: cross clippy --target ${{ matrix.target }} --all-features -vv -- -D warnings
+
+    - name: Clippy tests
+      run: cross clippy --target ${{ matrix.target }} --all-features -vv --tests -- -D warnings
+
+    - name: Clippy release
+      run: cross clippy --target ${{ matrix.target }} --all-features -vv --release -- -D warnings
+
+    - name: Test
+      run: cross test --target ${{ matrix.target }} -vv
+
+  check-format:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install stable rust
+      uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: stable
+        components: rustfmt
+        override: true
+
+    - name: Check formatting
+      uses: actions-rs/cargo@v1
+      with:
+        command: fmt
+        args: -v -- --check
+
+  publish-docs:
+    runs-on: ubuntu-latest
+    needs: [build, check-format]
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install stable rust
+      uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: stable
+        override: true
+
+    - name: Generate docs
+      uses: actions-rs/cargo@v1
+      with:
+        command: doc
+        args: --no-deps --document-private-items
+
+    - name: Publish the docs to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: target/doc
