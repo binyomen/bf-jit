@@ -11,60 +11,42 @@ jobs:
         include:
         - os: ubuntu-latest
           rust: stable
-          target: i686-unknown-linux-gnu
         - os: ubuntu-latest
           rust: stable
-          target: x86_64-unknown-linux-gnu
         - os: ubuntu-latest
           rust: stable
-          target: aarch64-unknown-linux-gnu
         - os: ubuntu-latest
           rust: nightly
-          target: i686-unknown-linux-gnu
         - os: ubuntu-latest
           rust: nightly
-          target: x86_64-unknown-linux-gnu
         - os: ubuntu-latest
           rust: nightly
-          target: aarch64-unknown-linux-gnu
         - os: ubuntu-latest
           rust: beta
-          target: i686-unknown-linux-gnu
         - os: ubuntu-latest
           rust: beta
-          target: x86_64-unknown-linux-gnu
         - os: ubuntu-latest
           rust: beta
-          target: aarch64-unknown-linux-gnu
 
         - os: macos-latest
           rust: stable
-          target: x86_64-apple-darwin
         - os: macos-latest
           rust: nightly
-          target: x86_64-apple-darwin
         - os: macos-latest
           rust: beta
-          target: x86_64-apple-darwin
 
         - os: windows-latest
           rust: stable
-          target: i686-pc-windows-msvc
         - os: windows-latest
           rust: stable
-          target: x86_64-pc-windows-msvc
         - os: windows-latest
           rust: nightly
-          target: i686-pc-windows-msvc
         - os: windows-latest
           rust: nightly
-          target: x86_64-pc-windows-msvc
         - os: windows-latest
           rust: beta
-          target: i686-pc-windows-msvc
         - os: windows-latest
           rust: beta
-          target: x86_64-pc-windows-msvc
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v2
@@ -74,30 +56,26 @@ jobs:
       with:
         profile: minimal
         toolchain: ${{ matrix.rust }}
-        target: ${{ matrix.target }}
         components: clippy
         override: true
 
-    - name: Install cross
-      run: cargo install cross
-
     - name: Debug build
-      run: cross build --target ${{ matrix.target }} --all-features -vv
+      run: cargo build --all-features -vv
 
     - name: Release build
-      run: cross build --release --target ${{ matrix.target }} --all-features -vv
+      run: cargo build --release --all-features -vv
 
     - name: Clippy
-      run: cross clippy --target ${{ matrix.target }} --all-features -vv -- -D warnings
+      run: cargo clippy --all-features -vv -- -D warnings
 
     - name: Clippy tests
-      run: cross clippy --target ${{ matrix.target }} --all-features -vv --tests -- -D warnings
+      run: cargo clippy --all-features -vv --tests -- -D warnings
 
     - name: Clippy release
-      run: cross clippy --target ${{ matrix.target }} --all-features -vv --release -- -D warnings
+      run: cargo clippy --all-features -vv --release -- -D warnings
 
     - name: Test
-      run: cross test --target ${{ matrix.target }} -vv
+      run: cargo test --all-features -vv
 
   check-format:
     runs-on: ubuntu-latest
