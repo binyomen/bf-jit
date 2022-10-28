@@ -13,8 +13,8 @@ use {
 
 const RESOLUTION: (u32, u32) = (1280, 720);
 
-trait RunFunction: FnOnce(&str) -> Result<(), BfError> {}
-impl<T> RunFunction for T where T: FnOnce(&str) -> Result<(), BfError> {}
+trait RunFunction: Fn(&str) -> Result<(), BfError> {}
+impl<T> RunFunction for T where T: Fn(&str) -> Result<(), BfError> {}
 
 struct ImplInfo {
     name: &'static str,
@@ -57,11 +57,18 @@ fn graph_results_for_file(
 }
 
 fn benchmark(run_function: impl RunFunction, source_code: &str) -> Result<u128, BfError> {
-    let start = Instant::now();
+    const NUM_RUNS: usize = 100;
+    let mut times = [0; NUM_RUNS];
 
-    run_function(source_code)?;
+    for item in times.iter_mut() {
+        let start = Instant::now();
+        run_function(source_code)?;
+        *item = start.elapsed().as_millis();
+    }
 
-    Ok(start.elapsed().as_millis())
+    let sum = times.into_iter().sum::<u128>();
+    let num_runs_u128 = <usize as TryInto<u128>>::try_into(NUM_RUNS)?;
+    Ok(sum / num_runs_u128)
 }
 
 fn segmented_value_to_inner<T>(value: &SegmentValue<T>) -> &T {
@@ -98,7 +105,7 @@ fn create_graph<const N: usize>(
         .configure_mesh()
         .disable_x_mesh()
         .bold_line_style(WHITE.mix(0.3))
-        .y_desc("Runtime (ms)")
+        .y_desc("Average runtime (ms)")
         .x_desc("Implementation")
         .axis_desc_style(("sans-serif", 25))
         .label_style(("sans-serif", 20))
