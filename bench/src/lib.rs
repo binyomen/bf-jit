@@ -52,9 +52,9 @@ fn create_graph<const N: usize>(perf_millis: [ImplInfo; N]) -> Result<(), BfErro
     let max_value = perf_millis.iter().map(|x| x.millis).max().unwrap();
 
     let mut chart = ChartBuilder::on(&root)
-        .x_label_area_size(35)
-        .y_label_area_size(40)
-        .margin(5)
+        .x_label_area_size(65)
+        .y_label_area_size(60)
+        .margin(20)
         .caption("BF JIT performance comparison", ("sans-serif", 50.0))
         .build_cartesian_2d(names.into_segmented(), 0u128..(max_value + 100))?;
     chart
@@ -63,7 +63,8 @@ fn create_graph<const N: usize>(perf_millis: [ImplInfo; N]) -> Result<(), BfErro
         .bold_line_style(&WHITE.mix(0.3))
         .y_desc("Runtime (ms)")
         .x_desc("Implementation")
-        .axis_desc_style(("sans-serif", 15))
+        .axis_desc_style(("sans-serif", 25))
+        .label_style(("sans-serif", 20))
         .draw()?;
 
     chart.draw_series(
