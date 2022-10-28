@@ -1,6 +1,5 @@
-use std::error::Error;
+use util::BfError;
 
-fn main() -> Result<(), Box<dyn Error>> {
-    bench::graph_results()?;
-    Ok(())
+fn main() -> Result<(), BfError> {
+    bench::graph_results()
 }
