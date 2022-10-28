@@ -68,7 +68,7 @@ fn create_graph<const N: usize>(perf_millis: [ImplInfo; N]) -> Result<(), BfErro
     chart
         .configure_mesh()
         .disable_x_mesh()
-        .bold_line_style(&WHITE.mix(0.3))
+        .bold_line_style(WHITE.mix(0.3))
         .y_desc("Runtime (ms)")
         .x_desc("Implementation")
         .axis_desc_style(("sans-serif", 25))
@@ -83,7 +83,7 @@ fn create_graph<const N: usize>(perf_millis: [ImplInfo; N]) -> Result<(), BfErro
     )?;
 
     root.present()?;
-    println!("Performance graph has been saved to {}.", OUT_FILE_NAME);
+    println!("Performance graph has been saved to {OUT_FILE_NAME}.");
 
     Ok(())
 }

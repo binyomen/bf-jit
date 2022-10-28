@@ -13,9 +13,9 @@ pub enum BfError {
 impl fmt::Display for BfError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::Bf(s) => write!(f, "{}", s),
-            Self::DrawingArea(s) => write!(f, "{}", s),
-            Self::TryFromInt(err) => write!(f, "{}", err),
+            Self::Bf(s) => write!(f, "{s}"),
+            Self::DrawingArea(s) => write!(f, "{s}"),
+            Self::TryFromInt(err) => write!(f, "{err}"),
         }
     }
 }
@@ -27,7 +27,7 @@ where
     E: Error + Send + Sync,
 {
     fn from(err: DrawingAreaErrorKind<E>) -> Self {
-        BfError::DrawingArea(format!("{}", err))
+        BfError::DrawingArea(format!("{err}"))
     }
 }
 
