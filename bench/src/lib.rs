@@ -8,13 +8,10 @@ use {
         style::{Color, RED, WHITE},
     },
     std::{fs, time::Instant},
-    util::BfError,
+    util::{BfError, RunFunction},
 };
 
 const RESOLUTION: (u32, u32) = (1280, 720);
-
-trait RunFunction: Fn(&str) -> Result<(), BfError> {}
-impl<T> RunFunction for T where T: Fn(&str) -> Result<(), BfError> {}
 
 struct ImplInfo {
     name: &'static str,
