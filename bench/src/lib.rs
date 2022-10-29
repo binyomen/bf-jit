@@ -129,8 +129,8 @@ fn create_graph<const N: usize>(
     chart.draw_series(
         Histogram::vertical(&chart)
             .style_func(|value, _millis| match **segmented_value_to_inner(value) {
-                "simpleinterp" => BLUE.mix(0.7).filled(),
-                "opinterp" => YELLOW.mix(0.7).filled(),
+                "simpleinterp" => BLUE.mix(0.9).filled(),
+                "opinterp" => YELLOW.mix(0.9).filled(),
                 _ => unreachable!(),
             })
             .data(perf_millis.iter().map(|x| (&x.name, x.millis))),
