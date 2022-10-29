@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":[["Instruction",""],["OpCode",""]],"fn":[["parse",""],["translate_to_opcodes",""]],"struct":[["Program",""]]};
