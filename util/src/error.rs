@@ -44,3 +44,5 @@ impl From<io::Error> for BfError {
         BfError::Io(err)
     }
 }
+
+pub type BfResult<T> = Result<T, BfError>;

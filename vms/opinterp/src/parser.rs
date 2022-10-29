@@ -1,4 +1,4 @@
-use util::BfError;
+use util::{BfError, BfResult};
 
 #[derive(Debug, Eq, PartialEq)]
 pub enum Instruction {
@@ -18,7 +18,7 @@ pub struct Program {
     pub jump_table: Vec<usize>,
 }
 
-pub fn parse(source_code: &str) -> Result<Program, BfError> {
+pub fn parse(source_code: &str) -> BfResult<Program> {
     let mut instructions = vec![];
 
     for c in source_code.chars() {
@@ -43,7 +43,7 @@ pub fn parse(source_code: &str) -> Result<Program, BfError> {
     })
 }
 
-fn create_jump_table(instructions: &Vec<Instruction>) -> Result<Vec<usize>, BfError> {
+fn create_jump_table(instructions: &Vec<Instruction>) -> BfResult<Vec<usize>> {
     let mut pc = 0;
     let mut jump_table = vec![0; instructions.len()];
 

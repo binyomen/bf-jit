@@ -1,12 +1,12 @@
 use {
     crate::parser::{Instruction, Program},
     std::io::{Read, Write},
-    util::BfError,
+    util::{BfError, BfResult},
 };
 
 const MEMORY_SIZE: usize = 30000;
 
-pub fn run(program: Program, stdin: &mut dyn Read, stdout: &mut dyn Write) -> Result<(), BfError> {
+pub fn run(program: Program, stdin: &mut dyn Read, stdout: &mut dyn Write) -> BfResult<()> {
     let mut memory: [u8; MEMORY_SIZE] = [0; MEMORY_SIZE];
     let mut pc = 0;
     let mut data_pointer = 0;
@@ -41,14 +41,14 @@ pub fn run(program: Program, stdin: &mut dyn Read, stdout: &mut dyn Write) -> Re
     Ok(())
 }
 
-fn read(stdin: &mut dyn Read) -> Result<u8, BfError> {
+fn read(stdin: &mut dyn Read) -> BfResult<u8> {
     let mut c = [0; 1];
     stdin.read_exact(&mut c)?;
 
     Ok(c[0])
 }
 
-fn write(stdout: &mut dyn Write, byte: u8) -> Result<(), BfError> {
+fn write(stdout: &mut dyn Write, byte: u8) -> BfResult<()> {
     stdout.write_all(&[byte])?;
     stdout.flush()?;
 
@@ -61,7 +61,7 @@ fn jump(
     memory: &[u8; MEMORY_SIZE],
     data_pointer: usize,
     pc: &mut usize,
-) -> Result<(), BfError> {
+) -> BfResult<()> {
     let cond1 = if eq_zero {
         |a, b| a == b
     } else {
