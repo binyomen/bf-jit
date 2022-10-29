@@ -7,7 +7,7 @@ use {
         series::Histogram,
         style::{Color, RED, WHITE},
     },
-    std::{fs, io::Read, time::Instant},
+    std::{fs, time::Instant},
     util::{BfError, RunFunction},
 };
 
@@ -23,7 +23,7 @@ impl ImplInfo {
         name: &'static str,
         run_function: &dyn RunFunction,
         source_code: &str,
-        input: &mut dyn Read,
+        input: &str,
     ) -> Result<Self, BfError> {
         let millis = benchmark(name, run_function, source_code, input)?;
         Ok(Self { name, millis })
@@ -32,17 +32,15 @@ impl ImplInfo {
 
 pub fn graph_results() -> Result<(), BfError> {
     // See https://github.com/eliben/code-for-blog/tree/master/2017/bfjit/bf-programs.
-    for (short_title, title, input_string) in [
+    for (short_title, title, input) in [
         ("mandelbrot", "mandelbrot generator", ""),
         ("factor", "factorization", "179424691\n"),
     ] {
-        let mut input = input_string.as_bytes();
-
         let filepath = format!("corpus/{short_title}.bf");
         println!("Measuring file {filepath}...");
         let source_code = fs::read_to_string(filepath)?;
 
-        graph_results_for_file(title, short_title, &mut input, &source_code)?;
+        graph_results_for_file(title, short_title, input, &source_code)?;
     }
 
     Ok(())
@@ -51,7 +49,7 @@ pub fn graph_results() -> Result<(), BfError> {
 fn graph_results_for_file(
     title: &str,
     short_title: &str,
-    input: &mut dyn Read,
+    input: &str,
     source_code: &str,
 ) -> Result<(), BfError> {
     let perf_millis = [ImplInfo::new(
@@ -70,16 +68,16 @@ fn benchmark(
     name: &str,
     run_function: impl RunFunction,
     source_code: &str,
-    input: &mut dyn Read,
+    input: &str,
 ) -> Result<u128, BfError> {
     println!("Benchmarking {name}...");
 
-    const NUM_RUNS: usize = 1;
+    const NUM_RUNS: usize = 2;
     let mut times = [0; NUM_RUNS];
 
     for item in times.iter_mut() {
         let start = Instant::now();
-        run_function(source_code, input, &mut vec![])?;
+        run_function(source_code, &mut input.as_bytes(), &mut vec![])?;
         *item = start.elapsed().as_millis();
     }
 
