@@ -5,13 +5,17 @@ use {
         coord::ranged1d::{IntoSegmentedCoord, SegmentValue},
         drawing::IntoDrawingArea,
         series::Histogram,
-        style::{Color, BLUE, GREEN, WHITE, YELLOW},
+        style::{Color, RGBColor, WHITE},
     },
     std::{fs, time::Instant},
     util::{BfError, RunFunction},
 };
 
 const RESOLUTION: (u32, u32) = (1280, 720);
+
+const BAR1_COLOR: RGBColor = RGBColor(76, 114, 176);
+const BAR2_COLOR: RGBColor = RGBColor(191, 191, 0);
+const BAR3_COLOR: RGBColor = RGBColor(255, 165, 0);
 
 struct ImplInfo {
     name: &'static str,
@@ -130,9 +134,9 @@ fn create_graph<const N: usize>(
     chart.draw_series(
         Histogram::vertical(&chart)
             .style_func(|value, _millis| match **segmented_value_to_inner(value) {
-                "simpleinterp" => BLUE.mix(0.9).filled(),
-                "opinterp" => YELLOW.mix(0.9).filled(),
-                "opinterp2" => GREEN.mix(0.9).filled(),
+                "simpleinterp" => BAR1_COLOR.filled(),
+                "opinterp" => BAR2_COLOR.filled(),
+                "opinterp2" => BAR3_COLOR.filled(),
                 _ => unreachable!(),
             })
             .data(perf_millis.iter().map(|x| (&x.name, x.millis))),
