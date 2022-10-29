@@ -113,13 +113,13 @@
 <span id="113">113</span>
 </pre><pre class="rust"><code><span class="kw">use</span> {
     <span class="ident"><span class="kw">crate</span>::parser</span>::{<span class="ident">Instruction</span>, <span class="ident">Program</span>},
-    <span class="ident">std::io</span>::{<span class="self">self</span>, <span class="ident">Read</span>},
+    <span class="ident">std::io</span>::{<span class="ident">Read</span>, <span class="ident">Write</span>},
     <span class="ident">util::BfError</span>,
 };
 
 <span class="kw">const</span> <span class="ident">MEMORY_SIZE</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">30000</span>;
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">run</span>(<span class="ident">program</span>: <span class="ident">Program</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">BfError</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">run</span>(<span class="ident">program</span>: <span class="ident">Program</span>, <span class="ident">stdin</span>: <span class="kw-2">&amp;mut</span> <span class="kw">dyn</span> <span class="ident">Read</span>, <span class="ident">stdout</span>: <span class="kw-2">&amp;mut</span> <span class="kw">dyn</span> <span class="ident">Write</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">BfError</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">memory</span>: [<span class="ident">u8</span>; <span class="ident">MEMORY_SIZE</span>] <span class="op">=</span> [<span class="number">0</span>; <span class="ident">MEMORY_SIZE</span>];
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">pc</span> <span class="op">=</span> <span class="number">0</span>;
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">data_pointer</span> <span class="op">=</span> <span class="number">0</span>;
@@ -130,8 +130,8 @@
             <span class="ident">Instruction::DecPtr</span> =&gt; <span class="ident">data_pointer</span> <span class="op">-</span><span class="op">=</span> <span class="number">1</span>,
             <span class="ident">Instruction::IncData</span> =&gt; <span class="ident">memory</span>[<span class="ident">data_pointer</span>] <span class="op">=</span> <span class="ident">memory</span>[<span class="ident">data_pointer</span>].<span class="ident">wrapping_add</span>(<span class="number">1</span>),
             <span class="ident">Instruction::DecData</span> =&gt; <span class="ident">memory</span>[<span class="ident">data_pointer</span>] <span class="op">=</span> <span class="ident">memory</span>[<span class="ident">data_pointer</span>].<span class="ident">wrapping_sub</span>(<span class="number">1</span>),
-            <span class="ident">Instruction::Write</span> =&gt; <span class="ident">write</span>(<span class="ident">memory</span>[<span class="ident">data_pointer</span>]),
-            <span class="ident">Instruction::Read</span> =&gt; <span class="ident">memory</span>[<span class="ident">data_pointer</span>] <span class="op">=</span> <span class="ident">read</span>()<span class="question-mark">?</span>,
+            <span class="ident">Instruction::Read</span> =&gt; <span class="ident">memory</span>[<span class="ident">data_pointer</span>] <span class="op">=</span> <span class="ident">read</span>(<span class="ident">stdin</span>)<span class="question-mark">?</span>,
+            <span class="ident">Instruction::Write</span> =&gt; <span class="ident">write</span>(<span class="ident">stdout</span>, <span class="ident">memory</span>[<span class="ident">data_pointer</span>])<span class="question-mark">?</span>,
             <span class="ident">Instruction::JumpIfZero</span> =&gt; <span class="ident">jump</span>(
                 <span class="bool-val">true</span>, <span class="comment">/*eq_zero*/</span>
                 <span class="kw-2">&amp;</span><span class="ident">program</span>,
@@ -154,18 +154,18 @@
     <span class="prelude-val">Ok</span>(())
 }
 
-<span class="kw">fn</span> <span class="ident">write</span>(<span class="ident">byte</span>: <span class="ident">u8</span>) {
-    <span class="kw">let</span> <span class="ident">c</span>: <span class="ident">char</span> <span class="op">=</span> <span class="ident">byte</span>.<span class="ident">into</span>();
-    <span class="macro">print!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">c</span>);
-}
-
-<span class="kw">fn</span> <span class="ident">read</span>() -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">u8</span>, <span class="ident">BfError</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">stdin</span> <span class="op">=</span> <span class="ident">io::stdin</span>();
-
+<span class="kw">fn</span> <span class="ident">read</span>(<span class="ident">stdin</span>: <span class="kw-2">&amp;mut</span> <span class="kw">dyn</span> <span class="ident">Read</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">u8</span>, <span class="ident">BfError</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">c</span> <span class="op">=</span> [<span class="number">0</span>; <span class="number">1</span>];
     <span class="ident">stdin</span>.<span class="ident">read_exact</span>(<span class="kw-2">&amp;mut</span> <span class="ident">c</span>)<span class="question-mark">?</span>;
 
     <span class="prelude-val">Ok</span>(<span class="ident">c</span>[<span class="number">0</span>])
+}
+
+<span class="kw">fn</span> <span class="ident">write</span>(<span class="ident">stdout</span>: <span class="kw-2">&amp;mut</span> <span class="kw">dyn</span> <span class="ident">Write</span>, <span class="ident">byte</span>: <span class="ident">u8</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">BfError</span><span class="op">&gt;</span> {
+    <span class="ident">stdout</span>.<span class="ident">write_all</span>(<span class="kw-2">&amp;</span>[<span class="ident">byte</span>])<span class="question-mark">?</span>;
+    <span class="ident">stdout</span>.<span class="ident">flush</span>()<span class="question-mark">?</span>;
+
+    <span class="prelude-val">Ok</span>(())
 }
 
 <span class="kw">fn</span> <span class="ident">jump</span>(

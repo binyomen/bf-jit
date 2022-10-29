@@ -65,8 +65,8 @@
     <span class="ident">DecPtr</span>,
     <span class="ident">IncData</span>,
     <span class="ident">DecData</span>,
-    <span class="ident">Write</span>,
     <span class="ident">Read</span>,
+    <span class="ident">Write</span>,
     <span class="ident">JumpIfZero</span>,
     <span class="ident">JumpIfNotZero</span>,
 }
@@ -85,8 +85,8 @@
             <span class="string">&#39;&lt;&#39;</span> =&gt; <span class="ident">instructions</span>.<span class="ident">push</span>(<span class="ident">Instruction::DecPtr</span>),
             <span class="string">&#39;+&#39;</span> =&gt; <span class="ident">instructions</span>.<span class="ident">push</span>(<span class="ident">Instruction::IncData</span>),
             <span class="string">&#39;-&#39;</span> =&gt; <span class="ident">instructions</span>.<span class="ident">push</span>(<span class="ident">Instruction::DecData</span>),
-            <span class="string">&#39;.&#39;</span> =&gt; <span class="ident">instructions</span>.<span class="ident">push</span>(<span class="ident">Instruction::Write</span>),
             <span class="string">&#39;,&#39;</span> =&gt; <span class="ident">instructions</span>.<span class="ident">push</span>(<span class="ident">Instruction::Read</span>),
+            <span class="string">&#39;.&#39;</span> =&gt; <span class="ident">instructions</span>.<span class="ident">push</span>(<span class="ident">Instruction::Write</span>),
             <span class="string">&#39;[&#39;</span> =&gt; <span class="ident">instructions</span>.<span class="ident">push</span>(<span class="ident">Instruction::JumpIfZero</span>),
             <span class="string">&#39;]&#39;</span> =&gt; <span class="ident">instructions</span>.<span class="ident">push</span>(<span class="ident">Instruction::JumpIfNotZero</span>),
             <span class="kw">_</span> =&gt; (),
@@ -102,7 +102,7 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">parse_works</span>() {
-        <span class="kw">let</span> <span class="ident">program</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;&gt;a&lt;+bcde-._,[]_1234567890か&quot;</span>);
+        <span class="kw">let</span> <span class="ident">program</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;&gt;a&lt;+bcde-,_.[]_1234567890か&quot;</span>);
         <span class="macro">assert_eq!</span>(
             <span class="ident">program</span>,
             <span class="ident">Program</span> {
@@ -111,8 +111,8 @@
                     <span class="ident">Instruction::DecPtr</span>,
                     <span class="ident">Instruction::IncData</span>,
                     <span class="ident">Instruction::DecData</span>,
-                    <span class="ident">Instruction::Write</span>,
                     <span class="ident">Instruction::Read</span>,
+                    <span class="ident">Instruction::Write</span>,
                     <span class="ident">Instruction::JumpIfZero</span>,
                     <span class="ident">Instruction::JumpIfNotZero</span>,
                 ],
