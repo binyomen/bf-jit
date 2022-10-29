@@ -3,12 +3,12 @@ use {
     std::{error::Error, fmt, io, num::TryFromIntError},
 };
 
-#[derive(Debug)]
+#[derive(Debug, Eq, PartialEq)]
 pub enum BfError {
     Bf(String),
     DrawingArea(String),
     TryFromInt(TryFromIntError),
-    Io(io::Error),
+    Io(String),
 }
 
 impl fmt::Display for BfError {
@@ -17,7 +17,7 @@ impl fmt::Display for BfError {
             Self::Bf(s) => write!(f, "{s}"),
             Self::DrawingArea(s) => write!(f, "{s}"),
             Self::TryFromInt(err) => write!(f, "{err}"),
-            Self::Io(err) => write!(f, "{err}"),
+            Self::Io(s) => write!(f, "{s}"),
         }
     }
 }
@@ -41,7 +41,7 @@ impl From<TryFromIntError> for BfError {
 
 impl From<io::Error> for BfError {
     fn from(err: io::Error) -> Self {
-        BfError::Io(err)
+        BfError::Io(format!("{err}"))
     }
 }
 

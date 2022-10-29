@@ -5,7 +5,7 @@ use {
         coord::ranged1d::{IntoSegmentedCoord, SegmentValue},
         drawing::IntoDrawingArea,
         series::Histogram,
-        style::{Color, BLUE, WHITE, YELLOW},
+        style::{Color, BLUE, GREEN, WHITE, YELLOW},
     },
     std::{fs, time::Instant},
     util::{BfError, RunFunction},
@@ -55,6 +55,7 @@ fn graph_results_for_file(
     let perf_millis = [
         ImplInfo::new("simpleinterp", &simpleinterp::run, source_code, input)?,
         ImplInfo::new("opinterp", &opinterp::run, source_code, input)?,
+        ImplInfo::new("opinterp2", &opinterp2::run, source_code, input)?,
     ];
 
     create_graph(title, short_title, perf_millis)?;
@@ -131,6 +132,7 @@ fn create_graph<const N: usize>(
             .style_func(|value, _millis| match **segmented_value_to_inner(value) {
                 "simpleinterp" => BLUE.mix(0.9).filled(),
                 "opinterp" => YELLOW.mix(0.9).filled(),
+                "opinterp2" => GREEN.mix(0.9).filled(),
                 _ => unreachable!(),
             })
             .data(perf_millis.iter().map(|x| (&x.name, x.millis))),
