@@ -1,5 +1,9 @@
 use util::BfError;
 
-pub fn run(_source_code: &str) -> Result<(), BfError> {
-    Ok(())
+mod parser;
+mod vm;
+
+pub fn run(source_code: &str) -> Result<(), BfError> {
+    let program = parser::parse(source_code);
+    vm::run(program)
 }
