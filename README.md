@@ -14,12 +14,14 @@ A Rust implementation of the [Adventures in JIT compilation] series.
 
 ## Docs
 
+- [bench docs]
 - [simpleinterp docs]
 - [opinterp docs]
-- [bench docs]
+- [opinterp2 docs]
 
 <!-- LINKS -->
 [Adventures in JIT compilation]: https://eli.thegreenplace.net/2017/adventures-in-jit-compilation-part-1-an-interpreter
+[bench docs]: https://binyomen.github.io/bf-jit/bench/
 [simpleinterp docs]: https://binyomen.github.io/bf-jit/simpleinterp/
 [opinterp docs]: https://binyomen.github.io/bf-jit/opinterp/
-[bench docs]: https://binyomen.github.io/bf-jit/bench/
+[opinterp2 docs]: https://binyomen.github.io/bf-jit/opinterp2/
