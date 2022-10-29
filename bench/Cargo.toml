@@ -5,6 +5,7 @@ edition = '2021'
 default-run = 'bench'
 
 [dependencies]
+opinterp = {path = '../vms/opinterp'}
 plotters = '0.3.4'
 simpleinterp = {path = '../vms/simpleinterp'}
 util = {path = '../util'}

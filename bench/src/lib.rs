@@ -5,7 +5,7 @@ use {
         coord::ranged1d::{IntoSegmentedCoord, SegmentValue},
         drawing::IntoDrawingArea,
         series::Histogram,
-        style::{Color, RED, WHITE},
+        style::{Color, BLUE, WHITE, YELLOW},
     },
     std::{fs, time::Instant},
     util::{BfError, RunFunction},
@@ -52,12 +52,10 @@ fn graph_results_for_file(
     input: &str,
     source_code: &str,
 ) -> Result<(), BfError> {
-    let perf_millis = [ImplInfo::new(
-        "simpleinterp",
-        &simpleinterp::run,
-        source_code,
-        input,
-    )?];
+    let perf_millis = [
+        ImplInfo::new("simpleinterp", &simpleinterp::run, source_code, input)?,
+        ImplInfo::new("opinterp", &opinterp::run, source_code, input)?,
+    ];
 
     create_graph(title, short_title, perf_millis)?;
 
@@ -106,7 +104,7 @@ fn create_graph<const N: usize>(
 
     let names = perf_millis.iter().map(|x| x.name).collect::<Vec<_>>();
     let max_value = perf_millis.iter().map(|x| x.millis).max().unwrap();
-    println!("{max_value}");
+    let max_value_more_10_percent = ((max_value as f64) * 1.1) as u128;
 
     let mut chart = ChartBuilder::on(&root)
         .x_label_area_size(65)
@@ -116,7 +114,7 @@ fn create_graph<const N: usize>(
             format!("BF JIT performance comparison ({title})"),
             ("sans-serif", 50.0),
         )
-        .build_cartesian_2d(names.into_segmented(), 0u128..(max_value + 100))?;
+        .build_cartesian_2d(names.into_segmented(), 0u128..(max_value_more_10_percent))?;
     chart
         .configure_mesh()
         .disable_x_mesh()
@@ -130,7 +128,11 @@ fn create_graph<const N: usize>(
 
     chart.draw_series(
         Histogram::vertical(&chart)
-            .style(RED.mix(0.5).filled())
+            .style_func(|value, _millis| match **segmented_value_to_inner(value) {
+                "simpleinterp" => BLUE.mix(0.7).filled(),
+                "opinterp" => YELLOW.mix(0.7).filled(),
+                _ => unreachable!(),
+            })
             .data(perf_millis.iter().map(|x| (&x.name, x.millis))),
     )?;
 
