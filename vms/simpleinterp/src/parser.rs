@@ -4,8 +4,8 @@ pub enum Instruction {
     DecPtr,
     IncData,
     DecData,
-    Write,
     Read,
+    Write,
     JumpIfZero,
     JumpIfNotZero,
 }
@@ -24,8 +24,8 @@ pub fn parse(source_code: &str) -> Program {
             '<' => instructions.push(Instruction::DecPtr),
             '+' => instructions.push(Instruction::IncData),
             '-' => instructions.push(Instruction::DecData),
-            '.' => instructions.push(Instruction::Write),
             ',' => instructions.push(Instruction::Read),
+            '.' => instructions.push(Instruction::Write),
             '[' => instructions.push(Instruction::JumpIfZero),
             ']' => instructions.push(Instruction::JumpIfNotZero),
             _ => (),
@@ -41,7 +41,7 @@ mod tests {
 
     #[test]
     fn parse_works() {
-        let program = parse(">a<+bcde-._,[]_1234567890か");
+        let program = parse(">a<+bcde-,_.[]_1234567890か");
         assert_eq!(
             program,
             Program {
@@ -50,8 +50,8 @@ mod tests {
                     Instruction::DecPtr,
                     Instruction::IncData,
                     Instruction::DecData,
-                    Instruction::Write,
                     Instruction::Read,
+                    Instruction::Write,
                     Instruction::JumpIfZero,
                     Instruction::JumpIfNotZero,
                 ],

@@ -1,12 +1,12 @@
 use {
     crate::parser::{Instruction, Program},
-    std::io::{self, Read},
+    std::io::{Read, Write},
     util::BfError,
 };
 
 const MEMORY_SIZE: usize = 30000;
 
-pub fn run(program: Program) -> Result<(), BfError> {
+pub fn run(program: Program, stdin: &mut dyn Read, stdout: &mut dyn Write) -> Result<(), BfError> {
     let mut memory: [u8; MEMORY_SIZE] = [0; MEMORY_SIZE];
     let mut pc = 0;
     let mut data_pointer = 0;
@@ -17,8 +17,8 @@ pub fn run(program: Program) -> Result<(), BfError> {
             Instruction::DecPtr => data_pointer -= 1,
             Instruction::IncData => memory[data_pointer] = memory[data_pointer].wrapping_add(1),
             Instruction::DecData => memory[data_pointer] = memory[data_pointer].wrapping_sub(1),
-            Instruction::Write => write(memory[data_pointer]),
-            Instruction::Read => memory[data_pointer] = read()?,
+            Instruction::Read => memory[data_pointer] = read(stdin)?,
+            Instruction::Write => write(stdout, memory[data_pointer])?,
             Instruction::JumpIfZero => jump(
                 true, /*eq_zero*/
                 &program,
@@ -41,18 +41,18 @@ pub fn run(program: Program) -> Result<(), BfError> {
     Ok(())
 }
 
-fn write(byte: u8) {
-    let c: char = byte.into();
-    print!("{}", c);
-}
-
-fn read() -> Result<u8, BfError> {
-    let mut stdin = io::stdin();
-
+fn read(stdin: &mut dyn Read) -> Result<u8, BfError> {
     let mut c = [0; 1];
     stdin.read_exact(&mut c)?;
 
     Ok(c[0])
+}
+
+fn write(stdout: &mut dyn Write, byte: u8) -> Result<(), BfError> {
+    stdout.write_all(&[byte])?;
+    stdout.flush()?;
+
+    Ok(())
 }
 
 fn jump(
