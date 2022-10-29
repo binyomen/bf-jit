@@ -139,6 +139,8 @@
 <span id="139">139</span>
 <span id="140">140</span>
 <span id="141">141</span>
+<span id="142">142</span>
+<span id="143">143</span>
 </pre><pre class="rust"><code><span class="kw">use</span> {
     <span class="ident">plotters</span>::{
         <span class="ident">backend::BitMapBackend</span>,
@@ -146,7 +148,7 @@
         <span class="ident">coord::ranged1d</span>::{<span class="ident">IntoSegmentedCoord</span>, <span class="ident">SegmentValue</span>},
         <span class="ident">drawing::IntoDrawingArea</span>,
         <span class="ident">series::Histogram</span>,
-        <span class="ident">style</span>::{<span class="ident">Color</span>, <span class="ident">RED</span>, <span class="ident">WHITE</span>},
+        <span class="ident">style</span>::{<span class="ident">Color</span>, <span class="ident">BLUE</span>, <span class="ident">WHITE</span>, <span class="ident">YELLOW</span>},
     },
     <span class="ident">std</span>::{<span class="ident">fs</span>, <span class="ident">time::Instant</span>},
     <span class="ident">util</span>::{<span class="ident">BfError</span>, <span class="ident">RunFunction</span>},
@@ -193,12 +195,10 @@
     <span class="ident">input</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>,
     <span class="ident">source_code</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>,
 ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">BfError</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> <span class="ident">perf_millis</span> <span class="op">=</span> [<span class="ident">ImplInfo::new</span>(
-        <span class="string">&quot;simpleinterp&quot;</span>,
-        <span class="kw-2">&amp;</span><span class="ident">simpleinterp::run</span>,
-        <span class="ident">source_code</span>,
-        <span class="ident">input</span>,
-    )<span class="question-mark">?</span>];
+    <span class="kw">let</span> <span class="ident">perf_millis</span> <span class="op">=</span> [
+        <span class="ident">ImplInfo::new</span>(<span class="string">&quot;simpleinterp&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">simpleinterp::run</span>, <span class="ident">source_code</span>, <span class="ident">input</span>)<span class="question-mark">?</span>,
+        <span class="ident">ImplInfo::new</span>(<span class="string">&quot;opinterp&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">opinterp::run</span>, <span class="ident">source_code</span>, <span class="ident">input</span>)<span class="question-mark">?</span>,
+    ];
 
     <span class="ident">create_graph</span>(<span class="ident">title</span>, <span class="ident">short_title</span>, <span class="ident">perf_millis</span>)<span class="question-mark">?</span>;
 
@@ -247,7 +247,7 @@
 
     <span class="kw">let</span> <span class="ident">names</span> <span class="op">=</span> <span class="ident">perf_millis</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span>.<span class="ident">name</span>).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>();
     <span class="kw">let</span> <span class="ident">max_value</span> <span class="op">=</span> <span class="ident">perf_millis</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span>.<span class="ident">millis</span>).<span class="ident">max</span>().<span class="ident">unwrap</span>();
-    <span class="macro">println!</span>(<span class="string">&quot;{max_value}&quot;</span>);
+    <span class="kw">let</span> <span class="ident">max_value_more_10_percent</span> <span class="op">=</span> ((<span class="ident">max_value</span> <span class="kw">as</span> <span class="ident">f64</span>) <span class="op">*</span> <span class="number">1.1</span>) <span class="kw">as</span> <span class="ident">u128</span>;
 
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">chart</span> <span class="op">=</span> <span class="ident">ChartBuilder::on</span>(<span class="kw-2">&amp;</span><span class="ident">root</span>)
         .<span class="ident">x_label_area_size</span>(<span class="number">65</span>)
@@ -257,7 +257,7 @@
             <span class="macro">format!</span>(<span class="string">&quot;BF JIT performance comparison ({title})&quot;</span>),
             (<span class="string">&quot;sans-serif&quot;</span>, <span class="number">50.0</span>),
         )
-        .<span class="ident">build_cartesian_2d</span>(<span class="ident">names</span>.<span class="ident">into_segmented</span>(), <span class="number">0u128</span>..(<span class="ident">max_value</span> <span class="op">+</span> <span class="number">100</span>))<span class="question-mark">?</span>;
+        .<span class="ident">build_cartesian_2d</span>(<span class="ident">names</span>.<span class="ident">into_segmented</span>(), <span class="number">0u128</span>..(<span class="ident">max_value_more_10_percent</span>))<span class="question-mark">?</span>;
     <span class="ident">chart</span>
         .<span class="ident">configure_mesh</span>()
         .<span class="ident">disable_x_mesh</span>()
@@ -271,7 +271,11 @@
 
     <span class="ident">chart</span>.<span class="ident">draw_series</span>(
         <span class="ident">Histogram::vertical</span>(<span class="kw-2">&amp;</span><span class="ident">chart</span>)
-            .<span class="ident">style</span>(<span class="ident">RED</span>.<span class="ident">mix</span>(<span class="number">0.5</span>).<span class="ident">filled</span>())
+            .<span class="ident">style_func</span>(<span class="op">|</span><span class="ident">value</span>, <span class="ident">_millis</span><span class="op">|</span> <span class="kw">match</span> <span class="kw-2">*</span><span class="kw-2">*</span><span class="ident">segmented_value_to_inner</span>(<span class="ident">value</span>) {
+                <span class="string">&quot;simpleinterp&quot;</span> =&gt; <span class="ident">BLUE</span>.<span class="ident">mix</span>(<span class="number">0.7</span>).<span class="ident">filled</span>(),
+                <span class="string">&quot;opinterp&quot;</span> =&gt; <span class="ident">YELLOW</span>.<span class="ident">mix</span>(<span class="number">0.7</span>).<span class="ident">filled</span>(),
+                <span class="kw">_</span> =&gt; <span class="macro">unreachable!</span>(),
+            })
             .<span class="ident">data</span>(<span class="ident">perf_millis</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> (<span class="kw-2">&amp;</span><span class="ident">x</span>.<span class="ident">name</span>, <span class="ident">x</span>.<span class="ident">millis</span>))),
     )<span class="question-mark">?</span>;
 

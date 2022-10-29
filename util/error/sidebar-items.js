@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":[["BfError",""]]};
+window.SIDEBAR_ITEMS = {"enum":[["BfError",""]],"type":[["BfResult",""]]};
