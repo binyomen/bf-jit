@@ -1,2 +1,9 @@
 [workspace]
-members = ['bench', 'util', 'vms/simpleinterp', 'vms/opinterp', 'vms/opinterp2']
+members = [
+    'bench',
+    'util',
+    'vms/simpleinterp',
+    'vms/opinterp',
+    'vms/opinterp2',
+    'vms/opinterp3',
+]

@@ -29,6 +29,7 @@ version = "0.1.0"
 dependencies = [
  "opinterp",
  "opinterp2",
+ "opinterp3",
  "plotters",
  "simpleinterp",
  "util",
@@ -510,6 +511,13 @@ dependencies = [
 
 [[package]]
 name = "opinterp2"
+version = "0.1.0"
+dependencies = [
+ "util",
+]
+
+[[package]]
+name = "opinterp3"
 version = "0.1.0"
 dependencies = [
  "util",

@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-    [ValidateSet('simpleinterp', 'opinterp', 'opinterp2')]
+    [ValidateSet('simpleinterp', 'opinterp', 'opinterp2', 'opinterp3')]
     [Parameter(Mandatory, Position = 0)]
     [String] $Bin,
 

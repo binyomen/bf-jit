@@ -7,6 +7,7 @@ default-run = 'bench'
 [dependencies]
 opinterp = {path = '../vms/opinterp'}
 opinterp2 = {path = '../vms/opinterp2'}
+opinterp3 = {path = '../vms/opinterp3'}
 plotters = '0.3.4'
 simpleinterp = {path = '../vms/simpleinterp'}
 util = {path = '../util'}
