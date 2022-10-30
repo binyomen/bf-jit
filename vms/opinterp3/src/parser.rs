@@ -195,7 +195,7 @@ fn optimize_loops(seq: AstSeq) -> AstSeq {
             iter.next();
         }
 
-        if second_direction_count != first_direction_count || iter.next() != None {
+        if second_direction_count != first_direction_count || iter.next().is_some() {
             None
         } else {
             let forward = first_direction_node == AstNode::IncPtr;
