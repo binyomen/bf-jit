@@ -116,6 +116,7 @@ fn create_graph<const N: usize>(
     let mut chart = ChartBuilder::on(&root)
         .x_label_area_size(65)
         .y_label_area_size(90)
+        .right_y_label_area_size(90)
         .margin(20)
         .caption(
             format!("BF JIT performance comparison ({title})"),
