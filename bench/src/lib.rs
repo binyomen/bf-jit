@@ -57,14 +57,14 @@ fn graph_results_for_file(
     input: &str,
     source_code: &str,
 ) -> Result<(), BfError> {
-    let perf_millis = [
+    let impl_infos = [
         ImplInfo::new("simpleinterp", &simpleinterp::run, source_code, input)?,
         ImplInfo::new("opinterp", &opinterp::run, source_code, input)?,
         ImplInfo::new("opinterp2", &opinterp2::run, source_code, input)?,
         ImplInfo::new("opinterp3", &opinterp3::run, source_code, input)?,
     ];
 
-    create_graph(title, short_title, perf_millis)?;
+    create_graph(title, short_title, impl_infos)?;
 
     Ok(())
 }
@@ -102,15 +102,15 @@ fn segmented_value_to_inner<T>(value: &SegmentValue<T>) -> &T {
 fn create_graph<const N: usize>(
     title: &str,
     short_title: &str,
-    perf_millis: [ImplInfo; N],
+    impl_infos: [ImplInfo; N],
 ) -> Result<(), BfError> {
     let output_filename = format!("perf-graph-{short_title}.png");
 
     let root = BitMapBackend::new(&output_filename, RESOLUTION).into_drawing_area();
     root.fill(&WHITE)?;
 
-    let names = perf_millis.iter().map(|x| x.name).collect::<Vec<_>>();
-    let max_value = perf_millis.iter().map(|x| x.millis).max().unwrap();
+    let names = impl_infos.iter().map(|x| x.name).collect::<Vec<_>>();
+    let max_value = impl_infos.iter().map(|x| x.millis).max().unwrap();
     let max_value_more_10_percent = ((max_value as f64) * 1.1) as u128;
 
     let mut chart = ChartBuilder::on(&root)
@@ -142,7 +142,7 @@ fn create_graph<const N: usize>(
                 "opinterp3" => BAR4_COLOR.filled(),
                 _ => unreachable!(),
             })
-            .data(perf_millis.iter().map(|x| (&x.name, x.millis))),
+            .data(impl_infos.iter().map(|x| (&x.name, x.millis))),
     )?;
 
     root.present()?;
