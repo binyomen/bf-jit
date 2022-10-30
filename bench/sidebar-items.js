@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":[["BAR1_COLOR",""],["BAR2_COLOR",""],["BAR3_COLOR",""],["RESOLUTION",""]],"fn":[["benchmark",""],["create_graph",""],["graph_results",""],["graph_results_for_file",""],["segmented_value_to_inner",""]],"struct":[["ImplInfo",""]]};
+window.SIDEBAR_ITEMS = {"constant":[["BAR1_COLOR",""],["BAR2_COLOR",""],["BAR3_COLOR",""],["BAR4_COLOR",""],["RESOLUTION",""]],"fn":[["benchmark",""],["create_graph",""],["graph_results",""],["graph_results_for_file",""],["segmented_value_to_inner",""]],"struct":[["ImplInfo",""]]};

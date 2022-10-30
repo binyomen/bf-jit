@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":[["AstNode",""],["Instruction",""]],"fn":[["compile",""],["create_ast",""],["optimize_loops",""],["parse",""]],"struct":[["AstSeq",""],["Program",""]]};
