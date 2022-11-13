@@ -1,4 +1,5 @@
 use {
+    dynasmrt::{relocations::Relocation, Assembler},
     plotters::drawing::DrawingAreaErrorKind,
     std::{error::Error, fmt, io, num::TryFromIntError},
 };
@@ -9,6 +10,7 @@ pub enum BfError {
     DrawingArea(String),
     TryFromInt(TryFromIntError),
     Io(String),
+    Assembler(String),
 }
 
 impl fmt::Display for BfError {
@@ -18,6 +20,7 @@ impl fmt::Display for BfError {
             Self::DrawingArea(s) => write!(f, "{s}"),
             Self::TryFromInt(err) => write!(f, "{err}"),
             Self::Io(s) => write!(f, "{s}"),
+            Self::Assembler(s) => write!(f, "{s}"),
         }
     }
 }
@@ -42,6 +45,15 @@ impl From<TryFromIntError> for BfError {
 impl From<io::Error> for BfError {
     fn from(err: io::Error) -> Self {
         BfError::Io(format!("{err}"))
+    }
+}
+
+impl<R> From<Assembler<R>> for BfError
+where
+    R: fmt::Debug + Relocation,
+{
+    fn from(err: Assembler<R>) -> Self {
+        BfError::Assembler(format!("{err:?}"))
     }
 }
 

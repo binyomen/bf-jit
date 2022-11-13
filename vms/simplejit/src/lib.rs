@@ -15,6 +15,6 @@ pub fn run(source_code: &str, stdin: &mut dyn Read, stdout: &mut dyn Write) -> B
     let program = parser::parse(source_code)?;
     let mut runtime = Runtime::new(stdin, stdout);
 
-    let machine_code = compiler::compile(program, &mut runtime)?;
-    runtime.run(&machine_code)
+    let compiled_program = compiler::compile(program, &mut runtime)?;
+    runtime.run(compiled_program)
 }

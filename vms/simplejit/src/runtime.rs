@@ -1,5 +1,5 @@
 use {
-    memmap2::MmapMut,
+    crate::compiler::CompiledProgram,
     std::{
         io::{Read, Write},
         mem,
@@ -30,12 +30,8 @@ impl<'a> Runtime<'a> {
         self.memory.as_mut_ptr()
     }
 
-    pub fn run(&self, machine_code: &[u8]) -> BfResult<()> {
-        let mut mmap = MmapMut::map_anon(machine_code.len())?;
-        mmap.copy_from_slice(machine_code);
-
-        let mmap = mmap.make_exec()?;
-        let entry_point_pointer = mmap.as_ptr() as *const ();
+    pub fn run(&self, compiled_program: CompiledProgram) -> BfResult<()> {
+        let entry_point_pointer = compiled_program.function_ptr();
         let entry_point =
             unsafe { mem::transmute::<*const (), AsmEntryPoint>(entry_point_pointer) };
         entry_point();
