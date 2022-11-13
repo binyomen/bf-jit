@@ -69,6 +69,8 @@ fn run_test(run_function: impl RunFunction) {
         ("trivial-in", "X", "Y"),
         ("trivial-out", "", "!"),
     ] {
+        println!("Test: {}", name);
+
         let filepath = format!("../corpus/{name}.bf");
         let source_code = fs::read_to_string(filepath).unwrap();
 
