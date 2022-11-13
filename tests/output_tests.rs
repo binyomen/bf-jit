@@ -53,8 +53,21 @@ const MANDELBROT_EXPECTED_OUTPUT: &str = concat!(
 
 fn run_test(run_function: impl RunFunction) {
     for (name, input, expected_output) in [
-        ("mandelbrot", "", MANDELBROT_EXPECTED_OUTPUT),
+        ("add-two-nums", "", "7"),
+        ("count-1-to-5", "", "12345"),
         ("factor", "179424691\n", "179424691: 179424691\n"),
+        ("hello-world", "", "Hello World!\n"),
+        ("mandelbrot", "", MANDELBROT_EXPECTED_OUTPUT),
+        ("move-data", "", "304"),
+        ("move-data-left", "", "05"),
+        ("move-data-loops", "", "7733688"),
+        ("move-data-right", "", "03"),
+        ("mult-nums", "", "T"),
+        ("nested-loops", "", "?"),
+        ("no-loops", "", "70"),
+        ("optimizable-loops", "", "800"),
+        ("trivial-in", "X", "Y"),
+        ("trivial-out", "", "!"),
     ] {
         let filepath = format!("../corpus/{name}.bf");
         let source_code = fs::read_to_string(filepath).unwrap();
