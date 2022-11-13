@@ -40,7 +40,7 @@ jobs:
           target: x86_64-pc-windows-msvc
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Install ${{ matrix.rust }} rust
       uses: actions-rs/toolchain@v1
@@ -75,7 +75,7 @@ jobs:
   check-format:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Install stable rust
       uses: actions-rs/toolchain@v1
@@ -95,7 +95,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build, check-format]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Install stable rust
       uses: actions-rs/toolchain@v1
