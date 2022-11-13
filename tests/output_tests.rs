@@ -94,3 +94,4 @@ make_test!(opinterp, opinterp_test);
 make_test!(opinterp2, opinterp2_test);
 make_test!(opinterp3, opinterp3_test);
 make_test!(simplejit, simplejit_test);
+make_test!(opjit, opjit_test);

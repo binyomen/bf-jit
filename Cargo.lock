@@ -30,6 +30,7 @@ dependencies = [
  "opinterp",
  "opinterp2",
  "opinterp3",
+ "opjit",
  "plotters",
  "simpleinterp",
  "simplejit",
@@ -560,6 +561,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "opjit"
+version = "0.1.0"
+dependencies = [
+ "dynasmrt",
+ "util",
+]
+
+[[package]]
 name = "pathfinder_geometry"
 version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -798,6 +807,7 @@ dependencies = [
  "opinterp",
  "opinterp2",
  "opinterp3",
+ "opjit",
  "simpleinterp",
  "simplejit",
  "util",

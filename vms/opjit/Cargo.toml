@@ -1,0 +1,8 @@
+[package]
+name = 'opjit'
+version = '0.1.0'
+edition = '2021'
+
+[dependencies]
+dynasmrt = "1.2.3"
+util = {path = '../../util'}

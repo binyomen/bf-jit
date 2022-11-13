@@ -7,6 +7,7 @@ edition = '2021'
 opinterp = {path = '../vms/opinterp'}
 opinterp2 = {path = '../vms/opinterp2'}
 opinterp3 = {path = '../vms/opinterp3'}
+opjit = {path = '../vms/opjit'}
 simpleinterp = {path = '../vms/simpleinterp'}
 simplejit = {path = '../vms/simplejit'}
 util = {path = '../util'}

@@ -17,16 +17,12 @@ pub fn run(program: Program, stdin: &mut dyn Read, stdout: &mut dyn Write) -> Bf
             Instruction::DecPtr { count } => data_pointer -= count,
             Instruction::IncData { count } => {
                 let mut val = memory[data_pointer];
-                for _ in 0..count {
-                    val = val.wrapping_add(1)
-                }
+                val = val.wrapping_add(count.try_into().unwrap());
                 memory[data_pointer] = val;
             }
             Instruction::DecData { count } => {
                 let mut val = memory[data_pointer];
-                for _ in 0..count {
-                    val = val.wrapping_sub(1)
-                }
+                val = val.wrapping_sub(count.try_into().unwrap());
                 memory[data_pointer] = val;
             }
             Instruction::Read { count } => {

@@ -8,6 +8,7 @@ default-run = 'bench'
 opinterp = {path = '../vms/opinterp'}
 opinterp2 = {path = '../vms/opinterp2'}
 opinterp3 = {path = '../vms/opinterp3'}
+opjit = {path = '../vms/opjit'}
 plotters = '0.3.4'
 simpleinterp = {path = '../vms/simpleinterp'}
 simplejit = {path = '../vms/simplejit'}
