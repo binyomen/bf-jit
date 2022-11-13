@@ -18,8 +18,7 @@ macro_rules! dasm {
             ; .alias reg_arg1, rdi
             ; .alias reg_arg2, rsi
             ; .alias reg_temp1, r8
-            ; .alias reg_temp2, r9
-            ; .alias reg_temp2_low, r9b
+            ; .alias reg_temp1_low, r8b
             ; .alias reg_return, al
             $($t)*
         )
@@ -35,8 +34,7 @@ macro_rules! dasm {
             ; .alias reg_arg1, rcx
             ; .alias reg_arg2, rdx
             ; .alias reg_temp1, r8
-            ; .alias reg_temp2, r9
-            ; .alias reg_temp2_low, r9b
+            ; .alias reg_temp1_low, r8b
             ; .alias reg_return, al
             $($t)*
         )
@@ -203,22 +201,21 @@ pub fn compile(program: Program, runtime: &mut Runtime) -> BfResult<CompiledProg
                     dasm!(ops
                         ; cmp BYTE [reg_data_ptr], 0
                         ; jz =>skip_move
-                        ; mov reg_temp1, reg_data_ptr
+                        ; mov reg_temp1_low, BYTE [reg_data_ptr]
                     );
 
+                    let amount_i32: i32 = amount.try_into().unwrap();
                     if forward {
                         dasm!(ops
-                            ; add reg_temp1, DWORD amount.try_into().unwrap()
+                            ; add BYTE [reg_data_ptr + amount_i32], reg_temp1_low
                         );
                     } else {
                         dasm!(ops
-                            ; sub reg_temp1, DWORD amount.try_into().unwrap()
+                            ; add BYTE [reg_data_ptr - amount_i32], reg_temp1_low
                         );
                     }
 
                     dasm!(ops
-                        ; movzx reg_temp2, BYTE [reg_data_ptr]
-                        ; add BYTE [reg_temp1], reg_temp2_low
                         ; mov BYTE [reg_data_ptr], 0
                         ; =>skip_move
                     );
