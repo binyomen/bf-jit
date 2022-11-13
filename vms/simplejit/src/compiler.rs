@@ -17,8 +17,8 @@ macro_rules! dasm {
             ; .alias reg_data_ptr, r13
             ; .alias reg_arg1, rdi
             ; .alias reg_arg2, rsi
-            ; .alias reg_ret, rax
-            ; .alias reg_ret_byte, al
+            ; .alias reg_function_call, r8
+            ; .alias reg_return, al
             $($t)*
         )
     }
@@ -32,8 +32,8 @@ macro_rules! dasm {
             ; .alias reg_data_ptr, r13
             ; .alias reg_arg1, rcx
             ; .alias reg_arg2, rdx
-            ; .alias reg_ret, rax
-            ; .alias reg_ret_byte, al
+            ; .alias reg_function_call, r8
+            ; .alias reg_return, al
             $($t)*
         )
     }
@@ -109,17 +109,17 @@ pub fn compile(program: Program, runtime: &mut Runtime) -> BfResult<CompiledProg
             Instruction::Read => {
                 dasm!(ops
                     ; mov reg_arg1, QWORD runtime as *const Runtime as _
-                    ; mov reg_ret, QWORD Runtime::read as *const () as _
-                    ; call reg_ret
-                    ; mov BYTE [reg_data_ptr], reg_ret_byte
+                    ; mov reg_function_call, QWORD Runtime::read as *const () as _
+                    ; call reg_function_call
+                    ; mov BYTE [reg_data_ptr], reg_return
                 );
             }
             Instruction::Write => {
                 dasm!(ops
                     ; mov reg_arg1, QWORD runtime as *const Runtime as _
                     ; mov reg_arg2, [reg_data_ptr]
-                    ; mov reg_ret, QWORD Runtime::write as *const () as _
-                    ; call reg_ret
+                    ; mov reg_function_call, QWORD Runtime::write as *const () as _
+                    ; call reg_function_call
                 );
             }
             Instruction::JumpIfZero => {
