@@ -1,1 +1,1 @@
-window.ALL_CRATES = ["bench","opinterp","opinterp2","opinterp3","simpleinterp","simplejit","util"];
+window.ALL_CRATES = ["bench","opinterp","opinterp2","opinterp3","opjit","simpleinterp","simplejit","util"];

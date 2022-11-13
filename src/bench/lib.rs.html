@@ -154,6 +154,9 @@
 <span id="154">154</span>
 <span id="155">155</span>
 <span id="156">156</span>
+<span id="157">157</span>
+<span id="158">158</span>
+<span id="159">159</span>
 </pre><pre class="rust"><code><span class="kw">use </span>{
     plotters::{
         backend::BitMapBackend,
@@ -174,6 +177,7 @@
 <span class="kw">const </span>BAR3_COLOR: RGBColor = RGBColor(<span class="number">255</span>, <span class="number">165</span>, <span class="number">0</span>);
 <span class="kw">const </span>BAR4_COLOR: RGBColor = RGBColor(<span class="number">255</span>, <span class="number">0</span>, <span class="number">0</span>);
 <span class="kw">const </span>BAR5_COLOR: RGBColor = RGBColor(<span class="number">0</span>, <span class="number">128</span>, <span class="number">0</span>);
+<span class="kw">const </span>BAR6_COLOR: RGBColor = RGBColor(<span class="number">144</span>, <span class="number">238</span>, <span class="number">144</span>);
 
 <span class="kw">struct </span>ImplInfo {
     name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
@@ -220,6 +224,7 @@
         ImplInfo::new(<span class="string">&quot;opinterp2&quot;</span>, <span class="kw-2">&amp;</span>opinterp2::run, source_code, input)<span class="question-mark">?</span>,
         ImplInfo::new(<span class="string">&quot;opinterp3&quot;</span>, <span class="kw-2">&amp;</span>opinterp3::run, source_code, input)<span class="question-mark">?</span>,
         ImplInfo::new(<span class="string">&quot;simplejit&quot;</span>, <span class="kw-2">&amp;</span>simplejit::run, source_code, input)<span class="question-mark">?</span>,
+        ImplInfo::new(<span class="string">&quot;opjit&quot;</span>, <span class="kw-2">&amp;</span>opjit::run, source_code, input)<span class="question-mark">?</span>,
     ];
 
     create_graph(title, short_title, impl_infos)<span class="question-mark">?</span>;
@@ -300,6 +305,7 @@
                 <span class="string">&quot;opinterp2&quot; </span>=&gt; BAR3_COLOR.filled(),
                 <span class="string">&quot;opinterp3&quot; </span>=&gt; BAR4_COLOR.filled(),
                 <span class="string">&quot;simplejit&quot; </span>=&gt; BAR5_COLOR.filled(),
+                <span class="string">&quot;opjit&quot; </span>=&gt; BAR6_COLOR.filled(),
                 <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
             })
             .data(impl_infos.iter().map(|x| (<span class="kw-2">&amp;</span>x.name, x.millis))),
