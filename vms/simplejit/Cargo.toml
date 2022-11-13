@@ -1,0 +1,8 @@
+[package]
+name = 'simplejit'
+version = '0.1.0'
+edition = '2021'
+
+[dependencies]
+util = {path = '../../util'}
+memmap2 = '0.5.7'

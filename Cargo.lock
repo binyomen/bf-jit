@@ -32,6 +32,7 @@ dependencies = [
  "opinterp3",
  "plotters",
  "simpleinterp",
+ "simplejit",
  "util",
 ]
 
@@ -458,6 +459,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "memmap2"
+version = "0.5.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "95af15f345b17af2efc8ead6080fb8bc376f8cec1b35277b935637595fe77498"
+dependencies = [
+ "libc",
+]
+
+[[package]]
 name = "miniz_oxide"
 version = "0.5.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -700,6 +710,14 @@ dependencies = [
 name = "simpleinterp"
 version = "0.1.0"
 dependencies = [
+ "util",
+]
+
+[[package]]
+name = "simplejit"
+version = "0.1.0"
+dependencies = [
+ "memmap2",
  "util",
 ]
 

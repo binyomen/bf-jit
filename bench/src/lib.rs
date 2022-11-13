@@ -17,6 +17,7 @@ const BAR1_COLOR: RGBColor = RGBColor(76, 114, 176);
 const BAR2_COLOR: RGBColor = RGBColor(191, 191, 0);
 const BAR3_COLOR: RGBColor = RGBColor(255, 165, 0);
 const BAR4_COLOR: RGBColor = RGBColor(255, 0, 0);
+const BAR5_COLOR: RGBColor = RGBColor(0, 128, 0);
 
 struct ImplInfo {
     name: &'static str,
@@ -62,6 +63,7 @@ fn graph_results_for_file(
         ImplInfo::new("opinterp", &opinterp::run, source_code, input)?,
         ImplInfo::new("opinterp2", &opinterp2::run, source_code, input)?,
         ImplInfo::new("opinterp3", &opinterp3::run, source_code, input)?,
+        ImplInfo::new("simplejit", &simplejit::run, source_code, input)?,
     ];
 
     create_graph(title, short_title, impl_infos)?;
@@ -141,6 +143,7 @@ fn create_graph<const N: usize>(
                 "opinterp" => BAR2_COLOR.filled(),
                 "opinterp2" => BAR3_COLOR.filled(),
                 "opinterp3" => BAR4_COLOR.filled(),
+                "simplejit" => BAR5_COLOR.filled(),
                 _ => unreachable!(),
             })
             .data(impl_infos.iter().map(|x| (&x.name, x.millis))),
