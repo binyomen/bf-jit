@@ -1,3 +1,3 @@
-(function() {var implementors = {};
-implementors["util"] = [{"text":"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.64.0/core/fmt/trait.Display.html\" title=\"trait core::fmt::Display\">Display</a> for <a class=\"enum\" href=\"util/error/enum.BfError.html\" title=\"enum util::error::BfError\">BfError</a>","synthetic":false,"types":["util::error::BfError"]}];
-if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
+(function() {var implementors = {
+"util":[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.65.0/core/fmt/trait.Display.html\" title=\"trait core::fmt::Display\">Display</a> for <a class=\"enum\" href=\"util/error/enum.BfError.html\" title=\"enum util::error::BfError\">BfError</a>"]]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

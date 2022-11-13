@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `vms/opinterp3/src/parser.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>parser.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../opinterp3/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../opinterp3/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../opinterp3/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `vms/opinterp3/src/parser.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>parser.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../opinterp3/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../opinterp3/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../opinterp3/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -639,646 +639,646 @@
 <span id="639">639</span>
 <span id="640">640</span>
 <span id="641">641</span>
-</pre><pre class="rust"><code><span class="kw">use</span> {
-    <span class="ident">std</span>::{<span class="ident">iter::Peekable</span>, <span class="ident">slice</span>, <span class="ident">str::CharIndices</span>},
-    <span class="ident">util</span>::{<span class="ident">BfError</span>, <span class="ident">BfResult</span>},
+</pre><pre class="rust"><code><span class="kw">use </span>{
+    std::{iter::Peekable, slice, str::CharIndices},
+    util::{BfError, BfResult},
 };
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>)]</span>
-<span class="kw">enum</span> <span class="ident">AstNode</span> {
-    <span class="ident">IncPtr</span>,
-    <span class="ident">DecPtr</span>,
-    <span class="ident">IncData</span>,
-    <span class="ident">DecData</span>,
-    <span class="ident">Read</span>,
-    <span class="ident">Write</span>,
-    <span class="ident">Loop</span> { <span class="ident">seq</span>: <span class="ident">AstSeq</span> },
-    <span class="ident">SetDataToZero</span>,
-    <span class="ident">MovePtrUntilZero</span> { <span class="ident">forward</span>: <span class="ident">bool</span>, <span class="ident">amount</span>: <span class="ident">usize</span> },
-    <span class="ident">MoveData</span> { <span class="ident">forward</span>: <span class="ident">bool</span>, <span class="ident">amount</span>: <span class="ident">usize</span> },
+<span class="attribute">#[derive(Debug, Eq, PartialEq)]
+</span><span class="kw">enum </span>AstNode {
+    IncPtr,
+    DecPtr,
+    IncData,
+    DecData,
+    Read,
+    Write,
+    Loop { seq: AstSeq },
+    SetDataToZero,
+    MovePtrUntilZero { forward: bool, amount: usize },
+    MoveData { forward: bool, amount: usize },
 }
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>)]</span>
-<span class="kw">struct</span> <span class="ident">AstSeq</span> {
-    <span class="ident">children</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">AstNode</span><span class="op">&gt;</span>,
+<span class="attribute">#[derive(Debug, Eq, PartialEq)]
+</span><span class="kw">struct </span>AstSeq {
+    children: Vec&lt;AstNode&gt;,
 }
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>)]</span>
-<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Instruction</span> {
-    <span class="ident">IncPtr</span> {
-        <span class="ident">count</span>: <span class="ident">usize</span>,
+<span class="attribute">#[derive(Debug, Eq, PartialEq)]
+</span><span class="kw">pub enum </span>Instruction {
+    IncPtr {
+        count: usize,
     },
-    <span class="ident">DecPtr</span> {
-        <span class="ident">count</span>: <span class="ident">usize</span>,
+    DecPtr {
+        count: usize,
     },
-    <span class="ident">IncData</span> {
-        <span class="ident">count</span>: <span class="ident">usize</span>,
+    IncData {
+        count: usize,
     },
-    <span class="ident">DecData</span> {
-        <span class="ident">count</span>: <span class="ident">usize</span>,
+    DecData {
+        count: usize,
     },
-    <span class="ident">Read</span> {
-        <span class="ident">count</span>: <span class="ident">usize</span>,
+    Read {
+        count: usize,
     },
-    <span class="ident">Write</span> {
-        <span class="ident">count</span>: <span class="ident">usize</span>,
+    Write {
+        count: usize,
     },
-    <span class="ident">JumpBegin</span> {
-        <span class="ident">destination</span>: <span class="ident">usize</span>,
+    JumpBegin {
+        destination: usize,
     },
-    <span class="ident">JumpEnd</span> {
-        <span class="ident">destination</span>: <span class="ident">usize</span>,
+    JumpEnd {
+        destination: usize,
     },
-    <span class="ident">SetDataToZero</span>,
-    <span class="ident">MovePtrUntilZero</span> {
-        <span class="ident">count</span>: <span class="ident">usize</span>,
-        <span class="ident">forward</span>: <span class="ident">bool</span>,
-        <span class="ident">amount</span>: <span class="ident">usize</span>,
+    SetDataToZero,
+    MovePtrUntilZero {
+        count: usize,
+        forward: bool,
+        amount: usize,
     },
-    <span class="ident">MoveData</span> {
-        <span class="ident">count</span>: <span class="ident">usize</span>,
-        <span class="ident">forward</span>: <span class="ident">bool</span>,
-        <span class="ident">amount</span>: <span class="ident">usize</span>,
+    MoveData {
+        count: usize,
+        forward: bool,
+        amount: usize,
     },
 }
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Program</span> {
-    <span class="kw">pub</span> <span class="ident">instructions</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Instruction</span><span class="op">&gt;</span>,
+<span class="attribute">#[derive(Debug, Eq, PartialEq)]
+</span><span class="kw">pub struct </span>Program {
+    <span class="kw">pub </span>instructions: Vec&lt;Instruction&gt;,
 }
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse</span>(<span class="ident">source_code</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">BfResult</span><span class="op">&lt;</span><span class="ident">Program</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> <span class="ident">ast</span> <span class="op">=</span> <span class="ident">create_ast</span>(<span class="ident">source_code</span>)<span class="question-mark">?</span>;
-    <span class="kw">let</span> <span class="ident">ast</span> <span class="op">=</span> <span class="ident">optimize_loops</span>(<span class="ident">ast</span>);
+<span class="kw">pub fn </span>parse(source_code: <span class="kw-2">&amp;</span>str) -&gt; BfResult&lt;Program&gt; {
+    <span class="kw">let </span>ast = create_ast(source_code)<span class="question-mark">?</span>;
+    <span class="kw">let </span>ast = optimize_loops(ast);
 
-    <span class="kw">let</span> <span class="ident">instructions</span> <span class="op">=</span> <span class="ident">compile</span>(<span class="ident">ast</span>);
+    <span class="kw">let </span>instructions = compile(ast);
 
-    <span class="prelude-val">Ok</span>(<span class="ident">Program</span> { <span class="ident">instructions</span> })
+    <span class="prelude-val">Ok</span>(Program { instructions })
 }
 
-<span class="kw">fn</span> <span class="ident">create_ast</span>(<span class="ident">source_code</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">BfResult</span><span class="op">&lt;</span><span class="ident">AstSeq</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">peek_meaningful_char</span>(<span class="ident">chars</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Peekable</span><span class="op">&lt;</span><span class="ident">CharIndices</span><span class="op">&gt;</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="ident">usize</span>, <span class="ident">char</span>)<span class="op">&gt;</span> {
-        <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="ident">_i</span>, <span class="ident">c</span>)) <span class="op">=</span> <span class="ident">chars</span>.<span class="ident">peek</span>() {
-            <span class="kw">match</span> <span class="ident">c</span> {
-                <span class="string">&#39;&gt;&#39;</span> <span class="op">|</span> <span class="string">&#39;&lt;&#39;</span> <span class="op">|</span> <span class="string">&#39;+&#39;</span> <span class="op">|</span> <span class="string">&#39;-&#39;</span> <span class="op">|</span> <span class="string">&#39;,&#39;</span> <span class="op">|</span> <span class="string">&#39;.&#39;</span> <span class="op">|</span> <span class="string">&#39;[&#39;</span> <span class="op">|</span> <span class="string">&#39;]&#39;</span> =&gt; <span class="kw">break</span>,
-                <span class="kw">_</span> =&gt; <span class="ident">chars</span>.<span class="ident">next</span>(),
+<span class="kw">fn </span>create_ast(source_code: <span class="kw-2">&amp;</span>str) -&gt; BfResult&lt;AstSeq&gt; {
+    <span class="kw">fn </span>peek_meaningful_char(chars: <span class="kw-2">&amp;mut </span>Peekable&lt;CharIndices&gt;) -&gt; <span class="prelude-ty">Option</span>&lt;(usize, char)&gt; {
+        <span class="kw">while let </span><span class="prelude-val">Some</span>((_i, c)) = chars.peek() {
+            <span class="kw">match </span>c {
+                <span class="string">&#39;&gt;&#39; </span>| <span class="string">&#39;&lt;&#39; </span>| <span class="string">&#39;+&#39; </span>| <span class="string">&#39;-&#39; </span>| <span class="string">&#39;,&#39; </span>| <span class="string">&#39;.&#39; </span>| <span class="string">&#39;[&#39; </span>| <span class="string">&#39;]&#39; </span>=&gt; <span class="kw">break</span>,
+                <span class="kw">_ </span>=&gt; chars.next(),
             };
         }
 
-        <span class="prelude-val">Some</span>(<span class="kw-2">*</span><span class="ident">chars</span>.<span class="ident">peek</span>()<span class="question-mark">?</span>)
+        <span class="prelude-val">Some</span>(<span class="kw-2">*</span>chars.peek()<span class="question-mark">?</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">parse_seq</span>(<span class="ident">chars</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Peekable</span><span class="op">&lt;</span><span class="ident">CharIndices</span><span class="op">&gt;</span>, <span class="ident">is_in_loop</span>: <span class="ident">bool</span>) -&gt; <span class="ident">BfResult</span><span class="op">&lt;</span><span class="ident">AstSeq</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">children</span> <span class="op">=</span> <span class="macro">vec!</span>[];
+    <span class="kw">fn </span>parse_seq(chars: <span class="kw-2">&amp;mut </span>Peekable&lt;CharIndices&gt;, is_in_loop: bool) -&gt; BfResult&lt;AstSeq&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>children = <span class="macro">vec!</span>[];
 
-        <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="ident">i</span>, <span class="ident">c</span>)) <span class="op">=</span> <span class="ident">peek_meaningful_char</span>(<span class="ident">chars</span>) {
-            <span class="comment">// Special handling to break without consuming the character.</span>
-            <span class="kw">if</span> <span class="ident">c</span> <span class="op">==</span> <span class="string">&#39;]&#39;</span> <span class="op">&amp;&amp;</span> <span class="ident">is_in_loop</span> {
+        <span class="kw">while let </span><span class="prelude-val">Some</span>((i, c)) = peek_meaningful_char(chars) {
+            <span class="comment">// Special handling to break without consuming the character.
+            </span><span class="kw">if </span>c == <span class="string">&#39;]&#39; </span>&amp;&amp; is_in_loop {
                 <span class="kw">break</span>;
             }
 
-            <span class="ident">chars</span>.<span class="ident">next</span>();
+            chars.next();
 
-            <span class="kw">match</span> <span class="ident">c</span> {
-                <span class="string">&#39;&gt;&#39;</span> =&gt; <span class="ident">children</span>.<span class="ident">push</span>(<span class="ident">AstNode::IncPtr</span>),
-                <span class="string">&#39;&lt;&#39;</span> =&gt; <span class="ident">children</span>.<span class="ident">push</span>(<span class="ident">AstNode::DecPtr</span>),
-                <span class="string">&#39;+&#39;</span> =&gt; <span class="ident">children</span>.<span class="ident">push</span>(<span class="ident">AstNode::IncData</span>),
-                <span class="string">&#39;-&#39;</span> =&gt; <span class="ident">children</span>.<span class="ident">push</span>(<span class="ident">AstNode::DecData</span>),
-                <span class="string">&#39;,&#39;</span> =&gt; <span class="ident">children</span>.<span class="ident">push</span>(<span class="ident">AstNode::Read</span>),
-                <span class="string">&#39;.&#39;</span> =&gt; <span class="ident">children</span>.<span class="ident">push</span>(<span class="ident">AstNode::Write</span>),
-                <span class="string">&#39;[&#39;</span> =&gt; {
-                    <span class="kw">let</span> <span class="ident">seq</span> <span class="op">=</span> <span class="ident">parse_seq</span>(<span class="ident">chars</span>, <span class="bool-val">true</span> <span class="comment">/*is_in_loop*/</span>)<span class="question-mark">?</span>;
-                    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="kw">_</span>, <span class="string">&#39;]&#39;</span>)) <span class="op">=</span> <span class="ident">chars</span>.<span class="ident">peek</span>() {
-                        <span class="comment">// Consume the &quot;]&quot;.</span>
-                        <span class="ident">chars</span>.<span class="ident">next</span>();
-                    } <span class="kw">else</span> {
-                        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">BfError::Bf</span>(<span class="macro">format!</span>(<span class="string">&quot;Unmatched &#39;[&#39; at index {i}.&quot;</span>)));
+            <span class="kw">match </span>c {
+                <span class="string">&#39;&gt;&#39; </span>=&gt; children.push(AstNode::IncPtr),
+                <span class="string">&#39;&lt;&#39; </span>=&gt; children.push(AstNode::DecPtr),
+                <span class="string">&#39;+&#39; </span>=&gt; children.push(AstNode::IncData),
+                <span class="string">&#39;-&#39; </span>=&gt; children.push(AstNode::DecData),
+                <span class="string">&#39;,&#39; </span>=&gt; children.push(AstNode::Read),
+                <span class="string">&#39;.&#39; </span>=&gt; children.push(AstNode::Write),
+                <span class="string">&#39;[&#39; </span>=&gt; {
+                    <span class="kw">let </span>seq = parse_seq(chars, <span class="bool-val">true </span><span class="comment">/*is_in_loop*/</span>)<span class="question-mark">?</span>;
+                    <span class="kw">if let </span><span class="prelude-val">Some</span>((<span class="kw">_</span>, <span class="string">&#39;]&#39;</span>)) = chars.peek() {
+                        <span class="comment">// Consume the &quot;]&quot;.
+                        </span>chars.next();
+                    } <span class="kw">else </span>{
+                        <span class="kw">return </span><span class="prelude-val">Err</span>(BfError::Bf(<span class="macro">format!</span>(<span class="string">&quot;Unmatched &#39;[&#39; at index {i}.&quot;</span>)));
                     }
 
-                    <span class="ident">children</span>.<span class="ident">push</span>(<span class="ident">AstNode::Loop</span> { <span class="ident">seq</span> });
+                    children.push(AstNode::Loop { seq });
                 }
-                <span class="string">&#39;]&#39;</span> =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">BfError::Bf</span>(<span class="macro">format!</span>(<span class="string">&quot;Unmatched &#39;]&#39; at index {i}.&quot;</span>))),
-                <span class="kw">_</span> =&gt; <span class="macro">unreachable!</span>(),
+                <span class="string">&#39;]&#39; </span>=&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(BfError::Bf(<span class="macro">format!</span>(<span class="string">&quot;Unmatched &#39;]&#39; at index {i}.&quot;</span>))),
+                <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
             }
         }
 
-        <span class="prelude-val">Ok</span>(<span class="ident">AstSeq</span> { <span class="ident">children</span> })
+        <span class="prelude-val">Ok</span>(AstSeq { children })
     }
 
-    <span class="ident">parse_seq</span>(
-        <span class="kw-2">&amp;mut</span> <span class="ident">source_code</span>.<span class="ident">char_indices</span>().<span class="ident">peekable</span>(),
-        <span class="bool-val">false</span>, <span class="comment">/*is_in_loop*/</span>
-    )
+    parse_seq(
+        <span class="kw-2">&amp;mut </span>source_code.char_indices().peekable(),
+        <span class="bool-val">false</span>, <span class="comment">/*is_in_loop*/
+    </span>)
 }
 
-<span class="kw">fn</span> <span class="ident">optimize_loops</span>(<span class="ident">seq</span>: <span class="ident">AstSeq</span>) -&gt; <span class="ident">AstSeq</span> {
-    <span class="kw">fn</span> <span class="ident">check_next_node</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(
-        <span class="ident">iter</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">Peekable</span><span class="op">&lt;</span><span class="ident">slice::Iter</span><span class="op">&lt;</span><span class="ident">AstNode</span><span class="op">&gt;</span><span class="op">&gt;</span>,
-        <span class="ident">expected_node</span>: <span class="kw-2">&amp;</span><span class="ident">AstNode</span>,
-    ) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">AstNode</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">node</span> <span class="op">=</span> <span class="ident">iter</span>.<span class="ident">next</span>()<span class="question-mark">?</span>;
-        <span class="kw">if</span> <span class="ident">node</span> <span class="op">==</span> <span class="ident">expected_node</span> {
-            <span class="prelude-val">Some</span>(<span class="ident">node</span>)
-        } <span class="kw">else</span> {
-            <span class="prelude-val">None</span>
-        }
+<span class="kw">fn </span>optimize_loops(seq: AstSeq) -&gt; AstSeq {
+    <span class="kw">fn </span>check_next_node&lt;<span class="lifetime">&#39;a</span>&gt;(
+        iter: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Peekable&lt;slice::Iter&lt;AstNode&gt;&gt;,
+        expected_node: <span class="kw-2">&amp;</span>AstNode,
+    ) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>AstNode&gt; {
+        <span class="kw">let </span>node = iter.next()<span class="question-mark">?</span>;
+        <span class="kw">if </span>node == expected_node {
+            <span class="prelude-val">Some</span>(node)
+        } <span class="kw">else </span>{
+            <span class="prelude-val">None
+        </span>}
     }
 
-    <span class="kw">fn</span> <span class="ident">check_move_ptr_until_zero_pattern</span>(<span class="ident">nodes</span>: <span class="kw-2">&amp;</span>[<span class="ident">AstNode</span>]) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="ident">bool</span>, <span class="ident">usize</span>)<span class="op">&gt;</span> {
-        <span class="kw">if</span> <span class="ident">nodes</span>.<span class="ident">is_empty</span>() {
-            <span class="prelude-val">None</span>
-        } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">nodes</span>.<span class="ident">iter</span>().<span class="ident">all</span>(<span class="op">|</span><span class="ident">node</span><span class="op">|</span> <span class="ident">node</span> <span class="op">==</span> <span class="kw-2">&amp;</span><span class="ident">AstNode::IncPtr</span>) {
-            <span class="prelude-val">Some</span>((<span class="bool-val">true</span> <span class="comment">/*forward*/</span>, <span class="ident">nodes</span>.<span class="ident">len</span>()))
-        } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">nodes</span>.<span class="ident">iter</span>().<span class="ident">all</span>(<span class="op">|</span><span class="ident">node</span><span class="op">|</span> <span class="ident">node</span> <span class="op">==</span> <span class="kw-2">&amp;</span><span class="ident">AstNode::DecPtr</span>) {
-            <span class="prelude-val">Some</span>((<span class="bool-val">false</span> <span class="comment">/*forward*/</span>, <span class="ident">nodes</span>.<span class="ident">len</span>()))
-        } <span class="kw">else</span> {
-            <span class="prelude-val">None</span>
-        }
+    <span class="kw">fn </span>check_move_ptr_until_zero_pattern(nodes: <span class="kw-2">&amp;</span>[AstNode]) -&gt; <span class="prelude-ty">Option</span>&lt;(bool, usize)&gt; {
+        <span class="kw">if </span>nodes.is_empty() {
+            <span class="prelude-val">None
+        </span>} <span class="kw">else if </span>nodes.iter().all(|node| node == <span class="kw-2">&amp;</span>AstNode::IncPtr) {
+            <span class="prelude-val">Some</span>((<span class="bool-val">true </span><span class="comment">/*forward*/</span>, nodes.len()))
+        } <span class="kw">else if </span>nodes.iter().all(|node| node == <span class="kw-2">&amp;</span>AstNode::DecPtr) {
+            <span class="prelude-val">Some</span>((<span class="bool-val">false </span><span class="comment">/*forward*/</span>, nodes.len()))
+        } <span class="kw">else </span>{
+            <span class="prelude-val">None
+        </span>}
     }
 
-    <span class="kw">fn</span> <span class="ident">check_set_data_to_zero_pattern</span>(<span class="ident">nodes</span>: <span class="kw-2">&amp;</span>[<span class="ident">AstNode</span>]) -&gt; <span class="ident">bool</span> {
-        <span class="op">!</span><span class="ident">nodes</span>.<span class="ident">is_empty</span>()
-            <span class="op">&amp;&amp;</span> (<span class="ident">nodes</span>.<span class="ident">iter</span>().<span class="ident">all</span>(<span class="op">|</span><span class="ident">node</span><span class="op">|</span> <span class="ident">node</span> <span class="op">==</span> <span class="kw-2">&amp;</span><span class="ident">AstNode::IncData</span>)
-                <span class="op">|</span><span class="op">|</span> <span class="ident">nodes</span>.<span class="ident">iter</span>().<span class="ident">all</span>(<span class="op">|</span><span class="ident">node</span><span class="op">|</span> <span class="ident">node</span> <span class="op">==</span> <span class="kw-2">&amp;</span><span class="ident">AstNode::DecData</span>))
+    <span class="kw">fn </span>check_set_data_to_zero_pattern(nodes: <span class="kw-2">&amp;</span>[AstNode]) -&gt; bool {
+        !nodes.is_empty()
+            &amp;&amp; (nodes.iter().all(|node| node == <span class="kw-2">&amp;</span>AstNode::IncData)
+                || nodes.iter().all(|node| node == <span class="kw-2">&amp;</span>AstNode::DecData))
     }
 
-    <span class="kw">fn</span> <span class="ident">check_move_data_pattern</span>(<span class="ident">nodes</span>: <span class="kw-2">&amp;</span>[<span class="ident">AstNode</span>]) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="ident">bool</span>, <span class="ident">usize</span>)<span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">iter</span> <span class="op">=</span> <span class="ident">nodes</span>.<span class="ident">iter</span>().<span class="ident">peekable</span>();
+    <span class="kw">fn </span>check_move_data_pattern(nodes: <span class="kw-2">&amp;</span>[AstNode]) -&gt; <span class="prelude-ty">Option</span>&lt;(bool, usize)&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>iter = nodes.iter().peekable();
 
-        <span class="ident">check_next_node</span>(<span class="kw-2">&amp;mut</span> <span class="ident">iter</span>, <span class="kw-2">&amp;</span><span class="ident">AstNode::DecData</span>)<span class="question-mark">?</span>;
+        check_next_node(<span class="kw-2">&amp;mut </span>iter, <span class="kw-2">&amp;</span>AstNode::DecData)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">first_direction_node</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">iter</span>.<span class="ident">next</span>()<span class="question-mark">?</span> {
-            <span class="ident">AstNode::IncPtr</span> =&gt; <span class="prelude-val">Some</span>(<span class="ident">AstNode::IncPtr</span>),
-            <span class="ident">AstNode::DecPtr</span> =&gt; <span class="prelude-val">Some</span>(<span class="ident">AstNode::DecPtr</span>),
-            <span class="kw">_</span> =&gt; <span class="prelude-val">None</span>,
+        <span class="kw">let </span>first_direction_node = <span class="kw">match </span>iter.next()<span class="question-mark">? </span>{
+            AstNode::IncPtr =&gt; <span class="prelude-val">Some</span>(AstNode::IncPtr),
+            AstNode::DecPtr =&gt; <span class="prelude-val">Some</span>(AstNode::DecPtr),
+            <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
         }<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">first_direction_count</span> <span class="op">=</span> <span class="number">1</span>;
-        <span class="kw">while</span> <span class="ident">iter</span>.<span class="ident">peek</span>()<span class="question-mark">?</span> <span class="op">==</span> <span class="op">&amp;&amp;</span><span class="ident">first_direction_node</span> {
-            <span class="ident">first_direction_count</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
-            <span class="macro">debug_assert_eq!</span>(<span class="ident">iter</span>.<span class="ident">peek</span>(), <span class="prelude-val">Some</span>(<span class="op">&amp;&amp;</span><span class="ident">first_direction_node</span>));
-            <span class="ident">iter</span>.<span class="ident">next</span>();
+        <span class="kw">let </span><span class="kw-2">mut </span>first_direction_count = <span class="number">1</span>;
+        <span class="kw">while </span>iter.peek()<span class="question-mark">? </span>== &amp;&amp;first_direction_node {
+            first_direction_count += <span class="number">1</span>;
+            <span class="macro">debug_assert_eq!</span>(iter.peek(), <span class="prelude-val">Some</span>(&amp;&amp;first_direction_node));
+            iter.next();
         }
 
-        <span class="ident">check_next_node</span>(<span class="kw-2">&amp;mut</span> <span class="ident">iter</span>, <span class="kw-2">&amp;</span><span class="ident">AstNode::IncData</span>)<span class="question-mark">?</span>;
+        check_next_node(<span class="kw-2">&amp;mut </span>iter, <span class="kw-2">&amp;</span>AstNode::IncData)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">second_direction_node</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">first_direction_node</span> <span class="op">==</span> <span class="ident">AstNode::IncPtr</span> {
-            <span class="ident">AstNode::DecPtr</span>
-        } <span class="kw">else</span> {
-            <span class="ident">AstNode::IncPtr</span>
+        <span class="kw">let </span>second_direction_node = <span class="kw">if </span>first_direction_node == AstNode::IncPtr {
+            AstNode::DecPtr
+        } <span class="kw">else </span>{
+            AstNode::IncPtr
         };
-        <span class="ident">check_next_node</span>(<span class="kw-2">&amp;mut</span> <span class="ident">iter</span>, <span class="kw-2">&amp;</span><span class="ident">second_direction_node</span>);
+        check_next_node(<span class="kw-2">&amp;mut </span>iter, <span class="kw-2">&amp;</span>second_direction_node);
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">second_direction_count</span> <span class="op">=</span> <span class="number">1</span>;
-        <span class="kw">while</span> <span class="ident">iter</span>.<span class="ident">peek</span>() <span class="op">==</span> <span class="prelude-val">Some</span>(<span class="op">&amp;&amp;</span><span class="ident">second_direction_node</span>) {
-            <span class="ident">second_direction_count</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
-            <span class="macro">debug_assert_eq!</span>(<span class="ident">iter</span>.<span class="ident">peek</span>(), <span class="prelude-val">Some</span>(<span class="op">&amp;&amp;</span><span class="ident">second_direction_node</span>));
-            <span class="ident">iter</span>.<span class="ident">next</span>();
+        <span class="kw">let </span><span class="kw-2">mut </span>second_direction_count = <span class="number">1</span>;
+        <span class="kw">while </span>iter.peek() == <span class="prelude-val">Some</span>(&amp;&amp;second_direction_node) {
+            second_direction_count += <span class="number">1</span>;
+            <span class="macro">debug_assert_eq!</span>(iter.peek(), <span class="prelude-val">Some</span>(&amp;&amp;second_direction_node));
+            iter.next();
         }
 
-        <span class="kw">if</span> <span class="ident">second_direction_count</span> <span class="op">!</span><span class="op">=</span> <span class="ident">first_direction_count</span> <span class="op">|</span><span class="op">|</span> <span class="ident">iter</span>.<span class="ident">next</span>().<span class="ident">is_some</span>() {
-            <span class="prelude-val">None</span>
-        } <span class="kw">else</span> {
-            <span class="kw">let</span> <span class="ident">forward</span> <span class="op">=</span> <span class="ident">first_direction_node</span> <span class="op">==</span> <span class="ident">AstNode::IncPtr</span>;
-            <span class="prelude-val">Some</span>((<span class="ident">forward</span>, <span class="ident">first_direction_count</span>))
+        <span class="kw">if </span>second_direction_count != first_direction_count || iter.next().is_some() {
+            <span class="prelude-val">None
+        </span>} <span class="kw">else </span>{
+            <span class="kw">let </span>forward = first_direction_node == AstNode::IncPtr;
+            <span class="prelude-val">Some</span>((forward, first_direction_count))
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">optimize_node</span>(<span class="ident">node</span>: <span class="ident">AstNode</span>) -&gt; <span class="ident">AstNode</span> {
-        <span class="kw">if</span> <span class="kw">let</span> <span class="ident">AstNode::Loop</span> { <span class="ident">seq</span> } <span class="op">=</span> <span class="ident">node</span> {
-            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="ident">forward</span>, <span class="ident">amount</span>)) <span class="op">=</span> <span class="ident">check_move_ptr_until_zero_pattern</span>(<span class="kw-2">&amp;</span><span class="ident">seq</span>.<span class="ident">children</span>) {
-                <span class="ident">AstNode::MovePtrUntilZero</span> { <span class="ident">forward</span>, <span class="ident">amount</span> }
-            } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">check_set_data_to_zero_pattern</span>(<span class="kw-2">&amp;</span><span class="ident">seq</span>.<span class="ident">children</span>) {
-                <span class="ident">AstNode::SetDataToZero</span>
-            } <span class="kw">else</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="ident">forward</span>, <span class="ident">amount</span>)) <span class="op">=</span> <span class="ident">check_move_data_pattern</span>(<span class="kw-2">&amp;</span><span class="ident">seq</span>.<span class="ident">children</span>) {
-                <span class="ident">AstNode::MoveData</span> { <span class="ident">forward</span>, <span class="ident">amount</span> }
-            } <span class="kw">else</span> {
-                <span class="ident">AstNode::Loop</span> {
-                    <span class="ident">seq</span>: <span class="ident">optimize_seq</span>(<span class="ident">seq</span>),
+    <span class="kw">fn </span>optimize_node(node: AstNode) -&gt; AstNode {
+        <span class="kw">if let </span>AstNode::Loop { seq } = node {
+            <span class="kw">if let </span><span class="prelude-val">Some</span>((forward, amount)) = check_move_ptr_until_zero_pattern(<span class="kw-2">&amp;</span>seq.children) {
+                AstNode::MovePtrUntilZero { forward, amount }
+            } <span class="kw">else if </span>check_set_data_to_zero_pattern(<span class="kw-2">&amp;</span>seq.children) {
+                AstNode::SetDataToZero
+            } <span class="kw">else if let </span><span class="prelude-val">Some</span>((forward, amount)) = check_move_data_pattern(<span class="kw-2">&amp;</span>seq.children) {
+                AstNode::MoveData { forward, amount }
+            } <span class="kw">else </span>{
+                AstNode::Loop {
+                    seq: optimize_seq(seq),
                 }
             }
-        } <span class="kw">else</span> {
-            <span class="ident">node</span>
+        } <span class="kw">else </span>{
+            node
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">optimize_seq</span>(<span class="ident">seq</span>: <span class="ident">AstSeq</span>) -&gt; <span class="ident">AstSeq</span> {
-        <span class="ident">AstSeq</span> {
-            <span class="ident">children</span>: <span class="ident">seq</span>.<span class="ident">children</span>.<span class="ident">into_iter</span>().<span class="ident">map</span>(<span class="ident">optimize_node</span>).<span class="ident">collect</span>(),
+    <span class="kw">fn </span>optimize_seq(seq: AstSeq) -&gt; AstSeq {
+        AstSeq {
+            children: seq.children.into_iter().map(optimize_node).collect(),
         }
     }
 
-    <span class="ident">optimize_seq</span>(<span class="ident">seq</span>)
+    optimize_seq(seq)
 }
 
-<span class="kw">fn</span> <span class="ident">compile</span>(<span class="ident">seq</span>: <span class="ident">AstSeq</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Instruction</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">compile_loop</span>(<span class="ident">seq</span>: <span class="ident">AstSeq</span>, <span class="ident">position</span>: <span class="ident">usize</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Instruction</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">children</span> <span class="op">=</span> <span class="ident">compile_seq</span>(<span class="ident">seq</span>, <span class="ident">position</span> <span class="op">+</span> <span class="number">1</span>);
+<span class="kw">fn </span>compile(seq: AstSeq) -&gt; Vec&lt;Instruction&gt; {
+    <span class="kw">fn </span>compile_loop(seq: AstSeq, position: usize) -&gt; Vec&lt;Instruction&gt; {
+        <span class="kw">let </span>children = compile_seq(seq, position + <span class="number">1</span>);
 
-        <span class="kw">let</span> <span class="ident">jump_begin</span> <span class="op">=</span> <span class="ident">Instruction::JumpBegin</span> {
-            <span class="ident">destination</span>: <span class="ident">position</span> <span class="op">+</span> <span class="ident">children</span>.<span class="ident">len</span>() <span class="op">+</span> <span class="number">1</span>,
+        <span class="kw">let </span>jump_begin = Instruction::JumpBegin {
+            destination: position + children.len() + <span class="number">1</span>,
         };
-        <span class="kw">let</span> <span class="ident">jump_end</span> <span class="op">=</span> <span class="ident">Instruction::JumpEnd</span> {
-            <span class="ident">destination</span>: <span class="ident">position</span>,
+        <span class="kw">let </span>jump_end = Instruction::JumpEnd {
+            destination: position,
         };
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">instructions</span> <span class="op">=</span> <span class="macro">vec!</span>[<span class="ident">jump_begin</span>];
-        <span class="ident">instructions</span>.<span class="ident">extend</span>(<span class="ident">children</span>);
-        <span class="ident">instructions</span>.<span class="ident">push</span>(<span class="ident">jump_end</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>instructions = <span class="macro">vec!</span>[jump_begin];
+        instructions.extend(children);
+        instructions.push(jump_end);
 
-        <span class="ident">instructions</span>
+        instructions
     }
 
-    <span class="kw">fn</span> <span class="ident">compile_node</span>(<span class="ident">node</span>: <span class="ident">AstNode</span>, <span class="ident">count</span>: <span class="ident">usize</span>) -&gt; <span class="ident">Instruction</span> {
-        <span class="kw">match</span> <span class="ident">node</span> {
-            <span class="ident">AstNode::IncPtr</span> =&gt; <span class="ident">Instruction::IncPtr</span> { <span class="ident">count</span> },
-            <span class="ident">AstNode::DecPtr</span> =&gt; <span class="ident">Instruction::DecPtr</span> { <span class="ident">count</span> },
-            <span class="ident">AstNode::IncData</span> =&gt; <span class="ident">Instruction::IncData</span> { <span class="ident">count</span> },
-            <span class="ident">AstNode::DecData</span> =&gt; <span class="ident">Instruction::DecData</span> { <span class="ident">count</span> },
-            <span class="ident">AstNode::Read</span> =&gt; <span class="ident">Instruction::Read</span> { <span class="ident">count</span> },
-            <span class="ident">AstNode::Write</span> =&gt; <span class="ident">Instruction::Write</span> { <span class="ident">count</span> },
-            <span class="ident">AstNode::SetDataToZero</span> =&gt; <span class="ident">Instruction::SetDataToZero</span>,
-            <span class="ident">AstNode::MovePtrUntilZero</span> { <span class="ident">forward</span>, <span class="ident">amount</span> } =&gt; <span class="ident">Instruction::MovePtrUntilZero</span> {
-                <span class="ident">count</span>,
-                <span class="ident">forward</span>,
-                <span class="ident">amount</span>,
+    <span class="kw">fn </span>compile_node(node: AstNode, count: usize) -&gt; Instruction {
+        <span class="kw">match </span>node {
+            AstNode::IncPtr =&gt; Instruction::IncPtr { count },
+            AstNode::DecPtr =&gt; Instruction::DecPtr { count },
+            AstNode::IncData =&gt; Instruction::IncData { count },
+            AstNode::DecData =&gt; Instruction::DecData { count },
+            AstNode::Read =&gt; Instruction::Read { count },
+            AstNode::Write =&gt; Instruction::Write { count },
+            AstNode::SetDataToZero =&gt; Instruction::SetDataToZero,
+            AstNode::MovePtrUntilZero { forward, amount } =&gt; Instruction::MovePtrUntilZero {
+                count,
+                forward,
+                amount,
             },
-            <span class="ident">AstNode::MoveData</span> { <span class="ident">forward</span>, <span class="ident">amount</span> } =&gt; <span class="ident">Instruction::MoveData</span> {
-                <span class="ident">count</span>,
-                <span class="ident">forward</span>,
-                <span class="ident">amount</span>,
+            AstNode::MoveData { forward, amount } =&gt; Instruction::MoveData {
+                count,
+                forward,
+                amount,
             },
-            <span class="kw">_</span> =&gt; <span class="macro">unreachable!</span>(),
+            <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">compile_seq</span>(<span class="ident">seq</span>: <span class="ident">AstSeq</span>, <span class="ident">position</span>: <span class="ident">usize</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Instruction</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">instructions</span> <span class="op">=</span> <span class="macro">vec!</span>[];
+    <span class="kw">fn </span>compile_seq(seq: AstSeq, position: usize) -&gt; Vec&lt;Instruction&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>instructions = <span class="macro">vec!</span>[];
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">iter</span> <span class="op">=</span> <span class="ident">seq</span>.<span class="ident">children</span>.<span class="ident">into_iter</span>().<span class="ident">peekable</span>();
-        <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">node</span>) <span class="op">=</span> <span class="ident">iter</span>.<span class="ident">next</span>() {
-            <span class="kw">match</span> <span class="ident">node</span> {
-                <span class="ident">AstNode::Loop</span> { <span class="ident">seq</span> } =&gt; {
-                    <span class="ident">instructions</span>.<span class="ident">extend</span>(<span class="ident">compile_loop</span>(<span class="ident">seq</span>, <span class="ident">position</span> <span class="op">+</span> <span class="ident">instructions</span>.<span class="ident">len</span>()))
+        <span class="kw">let </span><span class="kw-2">mut </span>iter = seq.children.into_iter().peekable();
+        <span class="kw">while let </span><span class="prelude-val">Some</span>(node) = iter.next() {
+            <span class="kw">match </span>node {
+                AstNode::Loop { seq } =&gt; {
+                    instructions.extend(compile_loop(seq, position + instructions.len()))
                 }
-                <span class="kw">_</span> =&gt; {
-                    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">count</span> <span class="op">=</span> <span class="number">1</span>;
-                    <span class="kw">while</span> <span class="ident">iter</span>.<span class="ident">peek</span>() <span class="op">==</span> <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">node</span>) {
-                        <span class="ident">count</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
-                        <span class="macro">debug_assert_eq!</span>(<span class="ident">iter</span>.<span class="ident">peek</span>(), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">node</span>));
-                        <span class="ident">iter</span>.<span class="ident">next</span>();
+                <span class="kw">_ </span>=&gt; {
+                    <span class="kw">let </span><span class="kw-2">mut </span>count = <span class="number">1</span>;
+                    <span class="kw">while </span>iter.peek() == <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>node) {
+                        count += <span class="number">1</span>;
+                        <span class="macro">debug_assert_eq!</span>(iter.peek(), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>node));
+                        iter.next();
                     }
 
-                    <span class="ident">instructions</span>.<span class="ident">push</span>(<span class="ident">compile_node</span>(<span class="ident">node</span>, <span class="ident">count</span>));
+                    instructions.push(compile_node(node, count));
                 }
             }
         }
 
-        <span class="ident">instructions</span>
+        instructions
     }
 
-    <span class="ident">compile_seq</span>(<span class="ident">seq</span>, <span class="number">0</span> <span class="comment">/*position*/</span>)
+    compile_seq(seq, <span class="number">0 </span><span class="comment">/*position*/</span>)
 }
 
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
-<span class="kw">mod</span> <span class="ident">tests</span> {
-    <span class="kw">use</span> {
-        <span class="kw">super</span>::{<span class="ident">parse</span>, <span class="ident">Instruction</span>, <span class="ident">Program</span>},
-        <span class="ident">util::BfError</span>,
+<span class="attribute">#[cfg(test)]
+</span><span class="kw">mod </span>tests {
+    <span class="kw">use </span>{
+        <span class="kw">super</span>::{parse, Instruction, Program},
+        util::BfError,
     };
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">parse_test</span>() {
-        <span class="kw">let</span> <span class="ident">program</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;&gt;a&lt;+bcde-,_.[]._1[.]234567890か&quot;</span>).<span class="ident">unwrap</span>();
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>parse_test() {
+        <span class="kw">let </span>program = parse(<span class="string">&quot;&gt;a&lt;+bcde-,_.[]._1[.]234567890か&quot;</span>).unwrap();
         <span class="macro">assert_eq!</span>(
-            <span class="ident">program</span>,
-            <span class="ident">Program</span> {
-                <span class="ident">instructions</span>: <span class="macro">vec!</span>[
-                    <span class="ident">Instruction::IncPtr</span> { <span class="ident">count</span>: <span class="number">1</span> },
-                    <span class="ident">Instruction::DecPtr</span> { <span class="ident">count</span>: <span class="number">1</span> },
-                    <span class="ident">Instruction::IncData</span> { <span class="ident">count</span>: <span class="number">1</span> },
-                    <span class="ident">Instruction::DecData</span> { <span class="ident">count</span>: <span class="number">1</span> },
-                    <span class="ident">Instruction::Read</span> { <span class="ident">count</span>: <span class="number">1</span> },
-                    <span class="ident">Instruction::Write</span> { <span class="ident">count</span>: <span class="number">1</span> },
-                    <span class="ident">Instruction::JumpBegin</span> { <span class="ident">destination</span>: <span class="number">7</span> },
-                    <span class="ident">Instruction::JumpEnd</span> { <span class="ident">destination</span>: <span class="number">6</span> },
-                    <span class="ident">Instruction::Write</span> { <span class="ident">count</span>: <span class="number">1</span> },
-                    <span class="ident">Instruction::JumpBegin</span> { <span class="ident">destination</span>: <span class="number">11</span> },
-                    <span class="ident">Instruction::Write</span> { <span class="ident">count</span>: <span class="number">1</span> },
-                    <span class="ident">Instruction::JumpEnd</span> { <span class="ident">destination</span>: <span class="number">9</span> },
+            program,
+            Program {
+                instructions: <span class="macro">vec!</span>[
+                    Instruction::IncPtr { count: <span class="number">1 </span>},
+                    Instruction::DecPtr { count: <span class="number">1 </span>},
+                    Instruction::IncData { count: <span class="number">1 </span>},
+                    Instruction::DecData { count: <span class="number">1 </span>},
+                    Instruction::Read { count: <span class="number">1 </span>},
+                    Instruction::Write { count: <span class="number">1 </span>},
+                    Instruction::JumpBegin { destination: <span class="number">7 </span>},
+                    Instruction::JumpEnd { destination: <span class="number">6 </span>},
+                    Instruction::Write { count: <span class="number">1 </span>},
+                    Instruction::JumpBegin { destination: <span class="number">11 </span>},
+                    Instruction::Write { count: <span class="number">1 </span>},
+                    Instruction::JumpEnd { destination: <span class="number">9 </span>},
                 ],
             }
         );
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">parse_count_test</span>() {
-        <span class="kw">let</span> <span class="ident">program</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;&gt;&gt;[&gt;&gt;&gt;&lt;&lt;+---,,],..&quot;</span>).<span class="ident">unwrap</span>();
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>parse_count_test() {
+        <span class="kw">let </span>program = parse(<span class="string">&quot;&gt;&gt;[&gt;&gt;&gt;&lt;&lt;+---,,],..&quot;</span>).unwrap();
         <span class="macro">assert_eq!</span>(
-            <span class="ident">program</span>,
-            <span class="ident">Program</span> {
-                <span class="ident">instructions</span>: <span class="macro">vec!</span>[
-                    <span class="ident">Instruction::IncPtr</span> { <span class="ident">count</span>: <span class="number">2</span> },
-                    <span class="ident">Instruction::JumpBegin</span> { <span class="ident">destination</span>: <span class="number">7</span> },
-                    <span class="ident">Instruction::IncPtr</span> { <span class="ident">count</span>: <span class="number">3</span> },
-                    <span class="ident">Instruction::DecPtr</span> { <span class="ident">count</span>: <span class="number">2</span> },
-                    <span class="ident">Instruction::IncData</span> { <span class="ident">count</span>: <span class="number">1</span> },
-                    <span class="ident">Instruction::DecData</span> { <span class="ident">count</span>: <span class="number">3</span> },
-                    <span class="ident">Instruction::Read</span> { <span class="ident">count</span>: <span class="number">2</span> },
-                    <span class="ident">Instruction::JumpEnd</span> { <span class="ident">destination</span>: <span class="number">1</span> },
-                    <span class="ident">Instruction::Read</span> { <span class="ident">count</span>: <span class="number">1</span> },
-                    <span class="ident">Instruction::Write</span> { <span class="ident">count</span>: <span class="number">2</span> },
+            program,
+            Program {
+                instructions: <span class="macro">vec!</span>[
+                    Instruction::IncPtr { count: <span class="number">2 </span>},
+                    Instruction::JumpBegin { destination: <span class="number">7 </span>},
+                    Instruction::IncPtr { count: <span class="number">3 </span>},
+                    Instruction::DecPtr { count: <span class="number">2 </span>},
+                    Instruction::IncData { count: <span class="number">1 </span>},
+                    Instruction::DecData { count: <span class="number">3 </span>},
+                    Instruction::Read { count: <span class="number">2 </span>},
+                    Instruction::JumpEnd { destination: <span class="number">1 </span>},
+                    Instruction::Read { count: <span class="number">1 </span>},
+                    Instruction::Write { count: <span class="number">2 </span>},
                 ],
             }
         );
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">nested_loops_test</span>() {
-        <span class="kw">let</span> <span class="ident">program</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;.[..[.....]...]..&quot;</span>).<span class="ident">unwrap</span>();
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>nested_loops_test() {
+        <span class="kw">let </span>program = parse(<span class="string">&quot;.[..[.....]...]..&quot;</span>).unwrap();
         <span class="macro">assert_eq!</span>(
-            <span class="ident">program</span>,
-            <span class="ident">Program</span> {
-                <span class="ident">instructions</span>: <span class="macro">vec!</span>[
-                    <span class="ident">Instruction::Write</span> { <span class="ident">count</span>: <span class="number">1</span> },
-                    <span class="ident">Instruction::JumpBegin</span> { <span class="ident">destination</span>: <span class="number">7</span> },
-                    <span class="ident">Instruction::Write</span> { <span class="ident">count</span>: <span class="number">2</span> },
-                    <span class="ident">Instruction::JumpBegin</span> { <span class="ident">destination</span>: <span class="number">5</span> },
-                    <span class="ident">Instruction::Write</span> { <span class="ident">count</span>: <span class="number">5</span> },
-                    <span class="ident">Instruction::JumpEnd</span> { <span class="ident">destination</span>: <span class="number">3</span> },
-                    <span class="ident">Instruction::Write</span> { <span class="ident">count</span>: <span class="number">3</span> },
-                    <span class="ident">Instruction::JumpEnd</span> { <span class="ident">destination</span>: <span class="number">1</span> },
-                    <span class="ident">Instruction::Write</span> { <span class="ident">count</span>: <span class="number">2</span> },
+            program,
+            Program {
+                instructions: <span class="macro">vec!</span>[
+                    Instruction::Write { count: <span class="number">1 </span>},
+                    Instruction::JumpBegin { destination: <span class="number">7 </span>},
+                    Instruction::Write { count: <span class="number">2 </span>},
+                    Instruction::JumpBegin { destination: <span class="number">5 </span>},
+                    Instruction::Write { count: <span class="number">5 </span>},
+                    Instruction::JumpEnd { destination: <span class="number">3 </span>},
+                    Instruction::Write { count: <span class="number">3 </span>},
+                    Instruction::JumpEnd { destination: <span class="number">1 </span>},
+                    Instruction::Write { count: <span class="number">2 </span>},
                 ],
             }
         );
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">optimized_loops_test</span>() {
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>optimized_loops_test() {
         <span class="macro">assert_eq!</span>(
-            <span class="ident">parse</span>(<span class="string">&quot;[&gt;]&quot;</span>).<span class="ident">unwrap</span>(),
-            <span class="ident">Program</span> {
-                <span class="ident">instructions</span>: <span class="macro">vec!</span>[<span class="ident">Instruction::MovePtrUntilZero</span> {
-                    <span class="ident">count</span>: <span class="number">1</span>,
-                    <span class="ident">forward</span>: <span class="bool-val">true</span>,
-                    <span class="ident">amount</span>: <span class="number">1</span>,
+            parse(<span class="string">&quot;[&gt;]&quot;</span>).unwrap(),
+            Program {
+                instructions: <span class="macro">vec!</span>[Instruction::MovePtrUntilZero {
+                    count: <span class="number">1</span>,
+                    forward: <span class="bool-val">true</span>,
+                    amount: <span class="number">1</span>,
                 },],
             }
         );
         <span class="macro">assert_eq!</span>(
-            <span class="ident">parse</span>(<span class="string">&quot;[&lt;]&quot;</span>).<span class="ident">unwrap</span>(),
-            <span class="ident">Program</span> {
-                <span class="ident">instructions</span>: <span class="macro">vec!</span>[<span class="ident">Instruction::MovePtrUntilZero</span> {
-                    <span class="ident">count</span>: <span class="number">1</span>,
-                    <span class="ident">forward</span>: <span class="bool-val">false</span>,
-                    <span class="ident">amount</span>: <span class="number">1</span>,
+            parse(<span class="string">&quot;[&lt;]&quot;</span>).unwrap(),
+            Program {
+                instructions: <span class="macro">vec!</span>[Instruction::MovePtrUntilZero {
+                    count: <span class="number">1</span>,
+                    forward: <span class="bool-val">false</span>,
+                    amount: <span class="number">1</span>,
                 },],
             }
         );
         <span class="macro">assert_eq!</span>(
-            <span class="ident">parse</span>(<span class="string">&quot;[&gt;&gt;&gt;]&quot;</span>).<span class="ident">unwrap</span>(),
-            <span class="ident">Program</span> {
-                <span class="ident">instructions</span>: <span class="macro">vec!</span>[<span class="ident">Instruction::MovePtrUntilZero</span> {
-                    <span class="ident">count</span>: <span class="number">1</span>,
-                    <span class="ident">forward</span>: <span class="bool-val">true</span>,
-                    <span class="ident">amount</span>: <span class="number">3</span>,
+            parse(<span class="string">&quot;[&gt;&gt;&gt;]&quot;</span>).unwrap(),
+            Program {
+                instructions: <span class="macro">vec!</span>[Instruction::MovePtrUntilZero {
+                    count: <span class="number">1</span>,
+                    forward: <span class="bool-val">true</span>,
+                    amount: <span class="number">3</span>,
                 },],
             }
         );
         <span class="macro">assert_eq!</span>(
-            <span class="ident">parse</span>(<span class="string">&quot;[&lt;&lt;&lt;]&quot;</span>).<span class="ident">unwrap</span>(),
-            <span class="ident">Program</span> {
-                <span class="ident">instructions</span>: <span class="macro">vec!</span>[<span class="ident">Instruction::MovePtrUntilZero</span> {
-                    <span class="ident">count</span>: <span class="number">1</span>,
-                    <span class="ident">forward</span>: <span class="bool-val">false</span>,
-                    <span class="ident">amount</span>: <span class="number">3</span>,
-                },],
-            }
-        );
-
-        <span class="macro">assert_eq!</span>(
-            <span class="ident">parse</span>(<span class="string">&quot;[+]&quot;</span>).<span class="ident">unwrap</span>(),
-            <span class="ident">Program</span> {
-                <span class="ident">instructions</span>: <span class="macro">vec!</span>[<span class="ident">Instruction::SetDataToZero</span>,],
-            }
-        );
-        <span class="macro">assert_eq!</span>(
-            <span class="ident">parse</span>(<span class="string">&quot;[-]&quot;</span>).<span class="ident">unwrap</span>(),
-            <span class="ident">Program</span> {
-                <span class="ident">instructions</span>: <span class="macro">vec!</span>[<span class="ident">Instruction::SetDataToZero</span>,],
-            }
-        );
-        <span class="macro">assert_eq!</span>(
-            <span class="ident">parse</span>(<span class="string">&quot;[++++++]&quot;</span>).<span class="ident">unwrap</span>(),
-            <span class="ident">Program</span> {
-                <span class="ident">instructions</span>: <span class="macro">vec!</span>[<span class="ident">Instruction::SetDataToZero</span>,],
-            }
-        );
-        <span class="macro">assert_eq!</span>(
-            <span class="ident">parse</span>(<span class="string">&quot;[-----]&quot;</span>).<span class="ident">unwrap</span>(),
-            <span class="ident">Program</span> {
-                <span class="ident">instructions</span>: <span class="macro">vec!</span>[<span class="ident">Instruction::SetDataToZero</span>,],
-            }
-        );
-
-        <span class="macro">assert_eq!</span>(
-            <span class="ident">parse</span>(<span class="string">&quot;[-&gt;+&lt;]&quot;</span>).<span class="ident">unwrap</span>(),
-            <span class="ident">Program</span> {
-                <span class="ident">instructions</span>: <span class="macro">vec!</span>[<span class="ident">Instruction::MoveData</span> {
-                    <span class="ident">count</span>: <span class="number">1</span>,
-                    <span class="ident">forward</span>: <span class="bool-val">true</span>,
-                    <span class="ident">amount</span>: <span class="number">1</span>
-                },],
-            }
-        );
-        <span class="macro">assert_eq!</span>(
-            <span class="ident">parse</span>(<span class="string">&quot;[-&lt;+&gt;]&quot;</span>).<span class="ident">unwrap</span>(),
-            <span class="ident">Program</span> {
-                <span class="ident">instructions</span>: <span class="macro">vec!</span>[<span class="ident">Instruction::MoveData</span> {
-                    <span class="ident">count</span>: <span class="number">1</span>,
-                    <span class="ident">forward</span>: <span class="bool-val">false</span>,
-                    <span class="ident">amount</span>: <span class="number">1</span>
-                },],
-            }
-        );
-        <span class="macro">assert_eq!</span>(
-            <span class="ident">parse</span>(<span class="string">&quot;[-&gt;&gt;&gt;&gt;+&lt;&lt;&lt;&lt;]&quot;</span>).<span class="ident">unwrap</span>(),
-            <span class="ident">Program</span> {
-                <span class="ident">instructions</span>: <span class="macro">vec!</span>[<span class="ident">Instruction::MoveData</span> {
-                    <span class="ident">count</span>: <span class="number">1</span>,
-                    <span class="ident">forward</span>: <span class="bool-val">true</span>,
-                    <span class="ident">amount</span>: <span class="number">4</span>
-                },],
-            }
-        );
-        <span class="macro">assert_eq!</span>(
-            <span class="ident">parse</span>(<span class="string">&quot;[-&lt;&lt;&lt;&lt;+&gt;&gt;&gt;&gt;]&quot;</span>).<span class="ident">unwrap</span>(),
-            <span class="ident">Program</span> {
-                <span class="ident">instructions</span>: <span class="macro">vec!</span>[<span class="ident">Instruction::MoveData</span> {
-                    <span class="ident">count</span>: <span class="number">1</span>,
-                    <span class="ident">forward</span>: <span class="bool-val">false</span>,
-                    <span class="ident">amount</span>: <span class="number">4</span>
+            parse(<span class="string">&quot;[&lt;&lt;&lt;]&quot;</span>).unwrap(),
+            Program {
+                instructions: <span class="macro">vec!</span>[Instruction::MovePtrUntilZero {
+                    count: <span class="number">1</span>,
+                    forward: <span class="bool-val">false</span>,
+                    amount: <span class="number">3</span>,
                 },],
             }
         );
 
         <span class="macro">assert_eq!</span>(
-            <span class="ident">parse</span>(<span class="string">&quot;[&gt;][&gt;]&quot;</span>).<span class="ident">unwrap</span>(),
-            <span class="ident">Program</span> {
-                <span class="ident">instructions</span>: <span class="macro">vec!</span>[<span class="ident">Instruction::MovePtrUntilZero</span> {
-                    <span class="ident">count</span>: <span class="number">2</span>,
-                    <span class="ident">forward</span>: <span class="bool-val">true</span>,
-                    <span class="ident">amount</span>: <span class="number">1</span>,
+            parse(<span class="string">&quot;[+]&quot;</span>).unwrap(),
+            Program {
+                instructions: <span class="macro">vec!</span>[Instruction::SetDataToZero,],
+            }
+        );
+        <span class="macro">assert_eq!</span>(
+            parse(<span class="string">&quot;[-]&quot;</span>).unwrap(),
+            Program {
+                instructions: <span class="macro">vec!</span>[Instruction::SetDataToZero,],
+            }
+        );
+        <span class="macro">assert_eq!</span>(
+            parse(<span class="string">&quot;[++++++]&quot;</span>).unwrap(),
+            Program {
+                instructions: <span class="macro">vec!</span>[Instruction::SetDataToZero,],
+            }
+        );
+        <span class="macro">assert_eq!</span>(
+            parse(<span class="string">&quot;[-----]&quot;</span>).unwrap(),
+            Program {
+                instructions: <span class="macro">vec!</span>[Instruction::SetDataToZero,],
+            }
+        );
+
+        <span class="macro">assert_eq!</span>(
+            parse(<span class="string">&quot;[-&gt;+&lt;]&quot;</span>).unwrap(),
+            Program {
+                instructions: <span class="macro">vec!</span>[Instruction::MoveData {
+                    count: <span class="number">1</span>,
+                    forward: <span class="bool-val">true</span>,
+                    amount: <span class="number">1
+                </span>},],
+            }
+        );
+        <span class="macro">assert_eq!</span>(
+            parse(<span class="string">&quot;[-&lt;+&gt;]&quot;</span>).unwrap(),
+            Program {
+                instructions: <span class="macro">vec!</span>[Instruction::MoveData {
+                    count: <span class="number">1</span>,
+                    forward: <span class="bool-val">false</span>,
+                    amount: <span class="number">1
+                </span>},],
+            }
+        );
+        <span class="macro">assert_eq!</span>(
+            parse(<span class="string">&quot;[-&gt;&gt;&gt;&gt;+&lt;&lt;&lt;&lt;]&quot;</span>).unwrap(),
+            Program {
+                instructions: <span class="macro">vec!</span>[Instruction::MoveData {
+                    count: <span class="number">1</span>,
+                    forward: <span class="bool-val">true</span>,
+                    amount: <span class="number">4
+                </span>},],
+            }
+        );
+        <span class="macro">assert_eq!</span>(
+            parse(<span class="string">&quot;[-&lt;&lt;&lt;&lt;+&gt;&gt;&gt;&gt;]&quot;</span>).unwrap(),
+            Program {
+                instructions: <span class="macro">vec!</span>[Instruction::MoveData {
+                    count: <span class="number">1</span>,
+                    forward: <span class="bool-val">false</span>,
+                    amount: <span class="number">4
+                </span>},],
+            }
+        );
+
+        <span class="macro">assert_eq!</span>(
+            parse(<span class="string">&quot;[&gt;][&gt;]&quot;</span>).unwrap(),
+            Program {
+                instructions: <span class="macro">vec!</span>[Instruction::MovePtrUntilZero {
+                    count: <span class="number">2</span>,
+                    forward: <span class="bool-val">true</span>,
+                    amount: <span class="number">1</span>,
                 },],
             }
         );
         <span class="macro">assert_eq!</span>(
-            <span class="ident">parse</span>(<span class="string">&quot;[&lt;][&lt;]&quot;</span>).<span class="ident">unwrap</span>(),
-            <span class="ident">Program</span> {
-                <span class="ident">instructions</span>: <span class="macro">vec!</span>[<span class="ident">Instruction::MovePtrUntilZero</span> {
-                    <span class="ident">count</span>: <span class="number">2</span>,
-                    <span class="ident">forward</span>: <span class="bool-val">false</span>,
-                    <span class="ident">amount</span>: <span class="number">1</span>,
+            parse(<span class="string">&quot;[&lt;][&lt;]&quot;</span>).unwrap(),
+            Program {
+                instructions: <span class="macro">vec!</span>[Instruction::MovePtrUntilZero {
+                    count: <span class="number">2</span>,
+                    forward: <span class="bool-val">false</span>,
+                    amount: <span class="number">1</span>,
                 },],
             }
         );
         <span class="macro">assert_eq!</span>(
-            <span class="ident">parse</span>(<span class="string">&quot;[+][+]&quot;</span>).<span class="ident">unwrap</span>(),
-            <span class="ident">Program</span> {
-                <span class="ident">instructions</span>: <span class="macro">vec!</span>[<span class="ident">Instruction::SetDataToZero</span>,],
+            parse(<span class="string">&quot;[+][+]&quot;</span>).unwrap(),
+            Program {
+                instructions: <span class="macro">vec!</span>[Instruction::SetDataToZero,],
             }
         );
         <span class="macro">assert_eq!</span>(
-            <span class="ident">parse</span>(<span class="string">&quot;[-][-]&quot;</span>).<span class="ident">unwrap</span>(),
-            <span class="ident">Program</span> {
-                <span class="ident">instructions</span>: <span class="macro">vec!</span>[<span class="ident">Instruction::SetDataToZero</span>,],
+            parse(<span class="string">&quot;[-][-]&quot;</span>).unwrap(),
+            Program {
+                instructions: <span class="macro">vec!</span>[Instruction::SetDataToZero,],
             }
         );
         <span class="macro">assert_eq!</span>(
-            <span class="ident">parse</span>(<span class="string">&quot;[-&gt;+&lt;][-&gt;+&lt;]&quot;</span>).<span class="ident">unwrap</span>(),
-            <span class="ident">Program</span> {
-                <span class="ident">instructions</span>: <span class="macro">vec!</span>[<span class="ident">Instruction::MoveData</span> {
-                    <span class="ident">count</span>: <span class="number">2</span>,
-                    <span class="ident">forward</span>: <span class="bool-val">true</span>,
-                    <span class="ident">amount</span>: <span class="number">1</span>,
+            parse(<span class="string">&quot;[-&gt;+&lt;][-&gt;+&lt;]&quot;</span>).unwrap(),
+            Program {
+                instructions: <span class="macro">vec!</span>[Instruction::MoveData {
+                    count: <span class="number">2</span>,
+                    forward: <span class="bool-val">true</span>,
+                    amount: <span class="number">1</span>,
                 },],
             }
         );
         <span class="macro">assert_eq!</span>(
-            <span class="ident">parse</span>(<span class="string">&quot;[-&lt;+&gt;][-&lt;+&gt;]&quot;</span>).<span class="ident">unwrap</span>(),
-            <span class="ident">Program</span> {
-                <span class="ident">instructions</span>: <span class="macro">vec!</span>[<span class="ident">Instruction::MoveData</span> {
-                    <span class="ident">count</span>: <span class="number">2</span>,
-                    <span class="ident">forward</span>: <span class="bool-val">false</span>,
-                    <span class="ident">amount</span>: <span class="number">1</span>,
+            parse(<span class="string">&quot;[-&lt;+&gt;][-&lt;+&gt;]&quot;</span>).unwrap(),
+            Program {
+                instructions: <span class="macro">vec!</span>[Instruction::MoveData {
+                    count: <span class="number">2</span>,
+                    forward: <span class="bool-val">false</span>,
+                    amount: <span class="number">1</span>,
                 },],
             }
         );
 
         <span class="macro">assert_eq!</span>(
-            <span class="ident">parse</span>(<span class="string">&quot;[&lt;&lt;&lt;&gt;]&quot;</span>).<span class="ident">unwrap</span>(),
-            <span class="ident">Program</span> {
-                <span class="ident">instructions</span>: <span class="macro">vec!</span>[
-                    <span class="ident">Instruction::JumpBegin</span> { <span class="ident">destination</span>: <span class="number">3</span> },
-                    <span class="ident">Instruction::DecPtr</span> { <span class="ident">count</span>: <span class="number">3</span> },
-                    <span class="ident">Instruction::IncPtr</span> { <span class="ident">count</span>: <span class="number">1</span> },
-                    <span class="ident">Instruction::JumpEnd</span> { <span class="ident">destination</span>: <span class="number">0</span> },
+            parse(<span class="string">&quot;[&lt;&lt;&lt;&gt;]&quot;</span>).unwrap(),
+            Program {
+                instructions: <span class="macro">vec!</span>[
+                    Instruction::JumpBegin { destination: <span class="number">3 </span>},
+                    Instruction::DecPtr { count: <span class="number">3 </span>},
+                    Instruction::IncPtr { count: <span class="number">1 </span>},
+                    Instruction::JumpEnd { destination: <span class="number">0 </span>},
                 ],
             }
         );
         <span class="macro">assert_eq!</span>(
-            <span class="ident">parse</span>(<span class="string">&quot;[+++-]&quot;</span>).<span class="ident">unwrap</span>(),
-            <span class="ident">Program</span> {
-                <span class="ident">instructions</span>: <span class="macro">vec!</span>[
-                    <span class="ident">Instruction::JumpBegin</span> { <span class="ident">destination</span>: <span class="number">3</span> },
-                    <span class="ident">Instruction::IncData</span> { <span class="ident">count</span>: <span class="number">3</span> },
-                    <span class="ident">Instruction::DecData</span> { <span class="ident">count</span>: <span class="number">1</span> },
-                    <span class="ident">Instruction::JumpEnd</span> { <span class="ident">destination</span>: <span class="number">0</span> },
+            parse(<span class="string">&quot;[+++-]&quot;</span>).unwrap(),
+            Program {
+                instructions: <span class="macro">vec!</span>[
+                    Instruction::JumpBegin { destination: <span class="number">3 </span>},
+                    Instruction::IncData { count: <span class="number">3 </span>},
+                    Instruction::DecData { count: <span class="number">1 </span>},
+                    Instruction::JumpEnd { destination: <span class="number">0 </span>},
                 ],
             }
         );
         <span class="macro">assert_eq!</span>(
-            <span class="ident">parse</span>(<span class="string">&quot;[-&gt;&gt;+&lt;]&quot;</span>).<span class="ident">unwrap</span>(),
-            <span class="ident">Program</span> {
-                <span class="ident">instructions</span>: <span class="macro">vec!</span>[
-                    <span class="ident">Instruction::JumpBegin</span> { <span class="ident">destination</span>: <span class="number">5</span> },
-                    <span class="ident">Instruction::DecData</span> { <span class="ident">count</span>: <span class="number">1</span> },
-                    <span class="ident">Instruction::IncPtr</span> { <span class="ident">count</span>: <span class="number">2</span> },
-                    <span class="ident">Instruction::IncData</span> { <span class="ident">count</span>: <span class="number">1</span> },
-                    <span class="ident">Instruction::DecPtr</span> { <span class="ident">count</span>: <span class="number">1</span> },
-                    <span class="ident">Instruction::JumpEnd</span> { <span class="ident">destination</span>: <span class="number">0</span> },
+            parse(<span class="string">&quot;[-&gt;&gt;+&lt;]&quot;</span>).unwrap(),
+            Program {
+                instructions: <span class="macro">vec!</span>[
+                    Instruction::JumpBegin { destination: <span class="number">5 </span>},
+                    Instruction::DecData { count: <span class="number">1 </span>},
+                    Instruction::IncPtr { count: <span class="number">2 </span>},
+                    Instruction::IncData { count: <span class="number">1 </span>},
+                    Instruction::DecPtr { count: <span class="number">1 </span>},
+                    Instruction::JumpEnd { destination: <span class="number">0 </span>},
                 ],
             }
         );
         <span class="macro">assert_eq!</span>(
-            <span class="ident">parse</span>(<span class="string">&quot;[-&gt;+&lt;&lt;]&quot;</span>).<span class="ident">unwrap</span>(),
-            <span class="ident">Program</span> {
-                <span class="ident">instructions</span>: <span class="macro">vec!</span>[
-                    <span class="ident">Instruction::JumpBegin</span> { <span class="ident">destination</span>: <span class="number">5</span> },
-                    <span class="ident">Instruction::DecData</span> { <span class="ident">count</span>: <span class="number">1</span> },
-                    <span class="ident">Instruction::IncPtr</span> { <span class="ident">count</span>: <span class="number">1</span> },
-                    <span class="ident">Instruction::IncData</span> { <span class="ident">count</span>: <span class="number">1</span> },
-                    <span class="ident">Instruction::DecPtr</span> { <span class="ident">count</span>: <span class="number">2</span> },
-                    <span class="ident">Instruction::JumpEnd</span> { <span class="ident">destination</span>: <span class="number">0</span> },
+            parse(<span class="string">&quot;[-&gt;+&lt;&lt;]&quot;</span>).unwrap(),
+            Program {
+                instructions: <span class="macro">vec!</span>[
+                    Instruction::JumpBegin { destination: <span class="number">5 </span>},
+                    Instruction::DecData { count: <span class="number">1 </span>},
+                    Instruction::IncPtr { count: <span class="number">1 </span>},
+                    Instruction::IncData { count: <span class="number">1 </span>},
+                    Instruction::DecPtr { count: <span class="number">2 </span>},
+                    Instruction::JumpEnd { destination: <span class="number">0 </span>},
                 ],
             }
         );
         <span class="macro">assert_eq!</span>(
-            <span class="ident">parse</span>(<span class="string">&quot;[-&gt;&gt;&gt;+&lt;&lt;&lt;&lt;]&quot;</span>).<span class="ident">unwrap</span>(),
-            <span class="ident">Program</span> {
-                <span class="ident">instructions</span>: <span class="macro">vec!</span>[
-                    <span class="ident">Instruction::JumpBegin</span> { <span class="ident">destination</span>: <span class="number">5</span> },
-                    <span class="ident">Instruction::DecData</span> { <span class="ident">count</span>: <span class="number">1</span> },
-                    <span class="ident">Instruction::IncPtr</span> { <span class="ident">count</span>: <span class="number">3</span> },
-                    <span class="ident">Instruction::IncData</span> { <span class="ident">count</span>: <span class="number">1</span> },
-                    <span class="ident">Instruction::DecPtr</span> { <span class="ident">count</span>: <span class="number">4</span> },
-                    <span class="ident">Instruction::JumpEnd</span> { <span class="ident">destination</span>: <span class="number">0</span> },
+            parse(<span class="string">&quot;[-&gt;&gt;&gt;+&lt;&lt;&lt;&lt;]&quot;</span>).unwrap(),
+            Program {
+                instructions: <span class="macro">vec!</span>[
+                    Instruction::JumpBegin { destination: <span class="number">5 </span>},
+                    Instruction::DecData { count: <span class="number">1 </span>},
+                    Instruction::IncPtr { count: <span class="number">3 </span>},
+                    Instruction::IncData { count: <span class="number">1 </span>},
+                    Instruction::DecPtr { count: <span class="number">4 </span>},
+                    Instruction::JumpEnd { destination: <span class="number">0 </span>},
                 ],
             }
         );
         <span class="macro">assert_eq!</span>(
-            <span class="ident">parse</span>(<span class="string">&quot;[-&gt;+&lt;.]&quot;</span>).<span class="ident">unwrap</span>(),
-            <span class="ident">Program</span> {
-                <span class="ident">instructions</span>: <span class="macro">vec!</span>[
-                    <span class="ident">Instruction::JumpBegin</span> { <span class="ident">destination</span>: <span class="number">6</span> },
-                    <span class="ident">Instruction::DecData</span> { <span class="ident">count</span>: <span class="number">1</span> },
-                    <span class="ident">Instruction::IncPtr</span> { <span class="ident">count</span>: <span class="number">1</span> },
-                    <span class="ident">Instruction::IncData</span> { <span class="ident">count</span>: <span class="number">1</span> },
-                    <span class="ident">Instruction::DecPtr</span> { <span class="ident">count</span>: <span class="number">1</span> },
-                    <span class="ident">Instruction::Write</span> { <span class="ident">count</span>: <span class="number">1</span> },
-                    <span class="ident">Instruction::JumpEnd</span> { <span class="ident">destination</span>: <span class="number">0</span> },
-                ],
-            }
-        );
-    }
-
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">nested_optimized_loops_test</span>() {
-        <span class="macro">assert_eq!</span>(
-            <span class="ident">parse</span>(<span class="string">&quot;..[...[++]..].&quot;</span>).<span class="ident">unwrap</span>(),
-            <span class="ident">Program</span> {
-                <span class="ident">instructions</span>: <span class="macro">vec!</span>[
-                    <span class="ident">Instruction::Write</span> { <span class="ident">count</span>: <span class="number">2</span> },
-                    <span class="ident">Instruction::JumpBegin</span> { <span class="ident">destination</span>: <span class="number">5</span> },
-                    <span class="ident">Instruction::Write</span> { <span class="ident">count</span>: <span class="number">3</span> },
-                    <span class="ident">Instruction::SetDataToZero</span>,
-                    <span class="ident">Instruction::Write</span> { <span class="ident">count</span>: <span class="number">2</span> },
-                    <span class="ident">Instruction::JumpEnd</span> { <span class="ident">destination</span>: <span class="number">1</span> },
-                    <span class="ident">Instruction::Write</span> { <span class="ident">count</span>: <span class="number">1</span> },
+            parse(<span class="string">&quot;[-&gt;+&lt;.]&quot;</span>).unwrap(),
+            Program {
+                instructions: <span class="macro">vec!</span>[
+                    Instruction::JumpBegin { destination: <span class="number">6 </span>},
+                    Instruction::DecData { count: <span class="number">1 </span>},
+                    Instruction::IncPtr { count: <span class="number">1 </span>},
+                    Instruction::IncData { count: <span class="number">1 </span>},
+                    Instruction::DecPtr { count: <span class="number">1 </span>},
+                    Instruction::Write { count: <span class="number">1 </span>},
+                    Instruction::JumpEnd { destination: <span class="number">0 </span>},
                 ],
             }
         );
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">parse_error_test</span>() {
-        <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;..[...&quot;</span>).<span class="ident">unwrap_err</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">err</span>, <span class="ident">BfError::Bf</span>(<span class="string">&quot;Unmatched &#39;[&#39; at index 2.&quot;</span>.<span class="ident">to_owned</span>()));
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>nested_optimized_loops_test() {
+        <span class="macro">assert_eq!</span>(
+            parse(<span class="string">&quot;..[...[++]..].&quot;</span>).unwrap(),
+            Program {
+                instructions: <span class="macro">vec!</span>[
+                    Instruction::Write { count: <span class="number">2 </span>},
+                    Instruction::JumpBegin { destination: <span class="number">5 </span>},
+                    Instruction::Write { count: <span class="number">3 </span>},
+                    Instruction::SetDataToZero,
+                    Instruction::Write { count: <span class="number">2 </span>},
+                    Instruction::JumpEnd { destination: <span class="number">1 </span>},
+                    Instruction::Write { count: <span class="number">1 </span>},
+                ],
+            }
+        );
+    }
 
-        <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">parse</span>(<span class="string">&quot;...]...&quot;</span>).<span class="ident">unwrap_err</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">err</span>, <span class="ident">BfError::Bf</span>(<span class="string">&quot;Unmatched &#39;]&#39; at index 3.&quot;</span>.<span class="ident">to_owned</span>()));
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>parse_error_test() {
+        <span class="kw">let </span>err = parse(<span class="string">&quot;..[...&quot;</span>).unwrap_err();
+        <span class="macro">assert_eq!</span>(err, BfError::Bf(<span class="string">&quot;Unmatched &#39;[&#39; at index 2.&quot;</span>.to_owned()));
+
+        <span class="kw">let </span>err = parse(<span class="string">&quot;...]...&quot;</span>).unwrap_err();
+        <span class="macro">assert_eq!</span>(err, BfError::Bf(<span class="string">&quot;Unmatched &#39;]&#39; at index 3.&quot;</span>.to_owned()));
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="opinterp3" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0 (a55dd71d5 2022-09-19)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="opinterp3" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0 (897e37553 2022-11-02)" ></div></body></html>
