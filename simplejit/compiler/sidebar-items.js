@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["compile",""],["compute_relative_32bit_offset",""]],"struct":[["CodeBuilder",""]]};
+window.SIDEBAR_ITEMS = {"fn":[["compile",""]],"macro":[["dasm",""]],"struct":[["CompiledProgram",""],["LabelPair",""]]};

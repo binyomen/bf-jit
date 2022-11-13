@@ -51,12 +51,8 @@
 <span id="51">51</span>
 <span id="52">52</span>
 <span id="53">53</span>
-<span id="54">54</span>
-<span id="55">55</span>
-<span id="56">56</span>
-<span id="57">57</span>
 </pre><pre class="rust"><code><span class="kw">use </span>{
-    memmap2::MmapMut,
+    <span class="kw">crate</span>::compiler::CompiledProgram,
     std::{
         io::{Read, Write},
         mem,
@@ -87,12 +83,8 @@
         <span class="self">self</span>.memory.as_mut_ptr()
     }
 
-    <span class="kw">pub fn </span>run(<span class="kw-2">&amp;</span><span class="self">self</span>, machine_code: <span class="kw-2">&amp;</span>[u8]) -&gt; BfResult&lt;()&gt; {
-        <span class="kw">let </span><span class="kw-2">mut </span>mmap = MmapMut::map_anon(machine_code.len())<span class="question-mark">?</span>;
-        mmap.copy_from_slice(machine_code);
-
-        <span class="kw">let </span>mmap = mmap.make_exec()<span class="question-mark">?</span>;
-        <span class="kw">let </span>entry_point_pointer = mmap.as_ptr() <span class="kw">as </span><span class="kw-2">*const </span>();
+    <span class="kw">pub fn </span>run(<span class="kw-2">&amp;</span><span class="self">self</span>, compiled_program: CompiledProgram) -&gt; BfResult&lt;()&gt; {
+        <span class="kw">let </span>entry_point_pointer = compiled_program.function_ptr();
         <span class="kw">let </span>entry_point =
             <span class="kw">unsafe </span>{ mem::transmute::&lt;<span class="kw-2">*const </span>(), AsmEntryPoint&gt;(entry_point_pointer) };
         entry_point();

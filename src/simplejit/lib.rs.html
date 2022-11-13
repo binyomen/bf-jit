@@ -35,8 +35,8 @@
     <span class="kw">let </span>program = parser::parse(source_code)<span class="question-mark">?</span>;
     <span class="kw">let </span><span class="kw-2">mut </span>runtime = Runtime::new(stdin, stdout);
 
-    <span class="kw">let </span>machine_code = compiler::compile(program, <span class="kw-2">&amp;mut </span>runtime)<span class="question-mark">?</span>;
-    runtime.run(<span class="kw-2">&amp;</span>machine_code)
+    <span class="kw">let </span>compiled_program = compiler::compile(program, <span class="kw-2">&amp;mut </span>runtime)<span class="question-mark">?</span>;
+    runtime.run(compiled_program)
 }
 </code></pre></div>
 </section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="simplejit" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0 (897e37553 2022-11-02)" ></div></body></html>
