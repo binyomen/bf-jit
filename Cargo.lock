@@ -742,6 +742,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "tests"
+version = "0.1.0"
+dependencies = [
+ "opinterp",
+ "opinterp2",
+ "opinterp3",
+ "simpleinterp",
+ "simplejit",
+ "util",
+]
+
+[[package]]
 name = "thiserror"
 version = "1.0.37"
 source = "registry+https://github.com/rust-lang/crates.io-index"

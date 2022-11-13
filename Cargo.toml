@@ -7,4 +7,6 @@ members = [
     'vms/opinterp2',
     'vms/opinterp3',
     'vms/simplejit',
+
+    'tests',
 ]

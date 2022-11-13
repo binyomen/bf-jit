@@ -1,0 +1,16 @@
+[package]
+name = 'tests'
+version = '0.1.0'
+edition = '2021'
+
+[dependencies]
+opinterp = {path = '../vms/opinterp'}
+opinterp2 = {path = '../vms/opinterp2'}
+opinterp3 = {path = '../vms/opinterp3'}
+simpleinterp = {path = '../vms/simpleinterp'}
+simplejit = {path = '../vms/simplejit'}
+util = {path = '../util'}
+
+[[test]]
+name = 'output_tests'
+path = 'output_tests.rs'
