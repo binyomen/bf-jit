@@ -631,6 +631,8 @@
 <span id="631">631</span>
 <span id="632">632</span>
 <span id="633">633</span>
+<span id="634">634</span>
+<span id="635">635</span>
 </pre><pre class="rust"><code><span class="kw">use </span>{
     std::{iter::Peekable, slice, str::CharIndices},
     util::{BfError, BfResult},
@@ -776,9 +778,11 @@
         <span class="kw">if </span>nodes.is_empty() {
             <span class="prelude-val">None
         </span>} <span class="kw">else if </span>nodes.iter().all(|node| node == <span class="kw-2">&amp;</span>AstNode::IncPtr) {
-            <span class="prelude-val">Some</span>((<span class="bool-val">true </span><span class="comment">/*forward*/</span>, nodes.len().try_into().unwrap()))
+            <span class="comment">// Crash if we ever have more than u32::MAX children of a loop.
+            </span><span class="prelude-val">Some</span>((<span class="bool-val">true </span><span class="comment">/*forward*/</span>, nodes.len().try_into().unwrap()))
         } <span class="kw">else if </span>nodes.iter().all(|node| node == <span class="kw-2">&amp;</span>AstNode::DecPtr) {
-            <span class="prelude-val">Some</span>((<span class="bool-val">false </span><span class="comment">/*forward*/</span>, nodes.len().try_into().unwrap()))
+            <span class="comment">// Crash if we ever have more than u32::MAX children of a loop.
+            </span><span class="prelude-val">Some</span>((<span class="bool-val">false </span><span class="comment">/*forward*/</span>, nodes.len().try_into().unwrap()))
         } <span class="kw">else </span>{
             <span class="prelude-val">None
         </span>}

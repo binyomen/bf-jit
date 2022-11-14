@@ -242,6 +242,24 @@
 <span id="242">242</span>
 <span id="243">243</span>
 <span id="244">244</span>
+<span id="245">245</span>
+<span id="246">246</span>
+<span id="247">247</span>
+<span id="248">248</span>
+<span id="249">249</span>
+<span id="250">250</span>
+<span id="251">251</span>
+<span id="252">252</span>
+<span id="253">253</span>
+<span id="254">254</span>
+<span id="255">255</span>
+<span id="256">256</span>
+<span id="257">257</span>
+<span id="258">258</span>
+<span id="259">259</span>
+<span id="260">260</span>
+<span id="261">261</span>
+<span id="262">262</span>
 </pre><pre class="rust"><code><span class="kw">use </span>{
     <span class="kw">crate</span>::{
         parser::{Instruction, Program},
@@ -325,8 +343,9 @@
 
     <span class="comment">// Set the initial value for the data pointer.
     </span><span class="macro">dasm!</span>(ops
-        ; mov reg_data_ptr, QWORD runtime.memory_ptr() <span class="kw">as _
-    </span>);
+        <span class="comment">// Reinterpret as i64, using the same bytes as before.
+        </span>; mov reg_data_ptr, QWORD runtime.memory_ptr() <span class="kw">as </span>i64
+    );
 
     <span class="kw">let </span><span class="kw-2">mut </span>open_bracket_stack = <span class="macro">vec!</span>[];
 
@@ -334,30 +353,43 @@
         <span class="kw">match </span>instruction {
             Instruction::IncPtr { count } =&gt; {
                 <span class="macro">dasm!</span>(ops
-                    ; add reg_data_ptr, DWORD count.try_into()<span class="question-mark">?
-                </span>);
+                    <span class="comment">// Reinterpret as i32, using the same bytes as before.
+                    </span>; add reg_data_ptr, DWORD count <span class="kw">as </span>i32
+                );
             }
             Instruction::DecPtr { count } =&gt; {
                 <span class="macro">dasm!</span>(ops
-                    ; sub reg_data_ptr, DWORD count.try_into()<span class="question-mark">?
-                </span>);
+                    <span class="comment">// Reinterpret as i32, using the same bytes as before.
+                    </span>; sub reg_data_ptr, DWORD count <span class="kw">as </span>i32
+                );
             }
             Instruction::IncData { count } =&gt; {
+                <span class="comment">// Adding 256 is effectively a nop, since it will wrap around to
+                // the original value. Mod out 256 to get a value between 0 and
+                // 255.
+                </span><span class="kw">let </span>wrapped_count = (count % <span class="number">256</span>) <span class="kw">as </span>u8;
                 <span class="macro">dasm!</span>(ops
-                    ; add BYTE [reg_data_ptr], BYTE count.try_into()<span class="question-mark">?
-                </span>);
+                    <span class="comment">// Reinterpret as i8, using the same bytes as before.
+                    </span>; add BYTE [reg_data_ptr], BYTE wrapped_count <span class="kw">as </span>i8
+                );
             }
             Instruction::DecData { count } =&gt; {
+                <span class="comment">// Subtracting 256 is effectively a nop, since it will wrap
+                // around to the original value. Mod out 256 to get a value
+                // between 0 and 255.
+                </span><span class="kw">let </span>wrapped_count = (count % <span class="number">256</span>) <span class="kw">as </span>u8;
                 <span class="macro">dasm!</span>(ops
-                    ; sub BYTE [reg_data_ptr], BYTE count.try_into()<span class="question-mark">?
-                </span>);
+                    <span class="comment">// Reinterpret as i8, using the same bytes as before.
+                    </span>; sub BYTE [reg_data_ptr], BYTE wrapped_count <span class="kw">as </span>i8
+                );
             }
             Instruction::Read { count } =&gt; {
                 <span class="kw">for _ in </span><span class="number">0</span>..count {
                     <span class="macro">dasm!</span>(ops
-                        ; mov reg_arg1, QWORD runtime <span class="kw">as </span><span class="kw-2">*const </span>Runtime <span class="kw">as _
-                        </span>; mov reg_temp1, QWORD Runtime::read <span class="kw">as </span><span class="kw-2">*const </span>() <span class="kw">as _
-                        </span>; call reg_temp1
+                        <span class="comment">// Reinterpret as i64, using the same bytes as before.
+                        </span>; mov reg_arg1, QWORD runtime <span class="kw">as </span><span class="kw-2">*const </span>Runtime <span class="kw">as </span>i64
+                        ; mov reg_temp1, QWORD Runtime::read <span class="kw">as </span><span class="kw-2">*const </span>() <span class="kw">as </span>i64
+                        ; call reg_temp1
                         ; mov BYTE [reg_data_ptr], reg_return
                     );
                 }
@@ -365,10 +397,11 @@
             Instruction::Write { count } =&gt; {
                 <span class="kw">for _ in </span><span class="number">0</span>..count {
                     <span class="macro">dasm!</span>(ops
-                        ; mov reg_arg1, QWORD runtime <span class="kw">as </span><span class="kw-2">*const </span>Runtime <span class="kw">as _
-                        </span>; mov reg_arg2, [reg_data_ptr]
-                        ; mov reg_temp1, QWORD Runtime::write <span class="kw">as </span><span class="kw-2">*const </span>() <span class="kw">as _
-                        </span>; call reg_temp1
+                        <span class="comment">// Reinterpret as i64, using the same bytes as before.
+                        </span>; mov reg_arg1, QWORD runtime <span class="kw">as </span><span class="kw-2">*const </span>Runtime <span class="kw">as </span>i64
+                        ; mov reg_arg2, [reg_data_ptr]
+                        ; mov reg_temp1, QWORD Runtime::write <span class="kw">as </span><span class="kw-2">*const </span>() <span class="kw">as </span>i64
+                        ; call reg_temp1
                     );
                 }
             }
@@ -421,12 +454,14 @@
 
                     <span class="kw">if </span>forward {
                         <span class="macro">dasm!</span>(ops
-                            ; add reg_data_ptr, DWORD amount.try_into()<span class="question-mark">?
-                        </span>);
+                            <span class="comment">// Reinterpret as i32, using the same bytes as before.
+                            </span>; add reg_data_ptr, DWORD amount <span class="kw">as </span>i32
+                        );
                     } <span class="kw">else </span>{
                         <span class="macro">dasm!</span>(ops
-                            ; sub reg_data_ptr, DWORD amount.try_into()<span class="question-mark">?
-                        </span>);
+                            <span class="comment">// Reinterpret as i32, using the same bytes as before.
+                            </span>; sub reg_data_ptr, DWORD amount <span class="kw">as </span>i32
+                        );
                     }
 
                     <span class="macro">dasm!</span>(ops
@@ -448,7 +483,8 @@
                         ; mov reg_temp1_low, BYTE [reg_data_ptr]
                     );
 
-                    <span class="kw">let </span>amount_i32: i32 = amount.try_into()<span class="question-mark">?</span>;
+                    <span class="comment">// Reinterpret as i32, using the same bytes as before.
+                    </span><span class="kw">let </span>amount_i32 = amount <span class="kw">as </span>i32;
                     <span class="kw">if </span>forward {
                         <span class="macro">dasm!</span>(ops
                             ; add BYTE [reg_data_ptr + amount_i32], reg_temp1_low

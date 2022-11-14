@@ -362,7 +362,7 @@
     }
 
     <span class="kw">let </span>sum = times.into_iter().sum::&lt;u128&gt;();
-    <span class="kw">let </span>num_runs_u128 = &lt;usize <span class="kw">as </span>TryInto&lt;u128&gt;&gt;::try_into(NUM_RUNS)<span class="question-mark">?</span>;
+    <span class="kw">let </span>num_runs_u128: u128 = NUM_RUNS.try_into()<span class="question-mark">?</span>;
     <span class="prelude-val">Ok</span>(sum / num_runs_u128)
 }
 

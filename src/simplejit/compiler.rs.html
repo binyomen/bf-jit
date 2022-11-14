@@ -171,6 +171,9 @@
 <span id="171">171</span>
 <span id="172">172</span>
 <span id="173">173</span>
+<span id="174">174</span>
+<span id="175">175</span>
+<span id="176">176</span>
 </pre><pre class="rust"><code><span class="kw">use </span>{
     <span class="kw">crate</span>::{
         parser::{Instruction, Program},
@@ -252,8 +255,9 @@
 
     <span class="comment">// Set the initial value for the data pointer.
     </span><span class="macro">dasm!</span>(ops
-        ; mov reg_data_ptr, QWORD runtime.memory_ptr() <span class="kw">as _
-    </span>);
+        <span class="comment">// Reinterpret as i64, using the same bytes as before.
+        </span>; mov reg_data_ptr, QWORD runtime.memory_ptr() <span class="kw">as </span>i64
+    );
 
     <span class="kw">let </span><span class="kw-2">mut </span>open_bracket_stack = <span class="macro">vec!</span>[];
 
@@ -281,18 +285,20 @@
             }
             Instruction::Read =&gt; {
                 <span class="macro">dasm!</span>(ops
-                    ; mov reg_arg1, QWORD runtime <span class="kw">as </span><span class="kw-2">*const </span>Runtime <span class="kw">as _
-                    </span>; mov reg_function_call, QWORD Runtime::read <span class="kw">as </span><span class="kw-2">*const </span>() <span class="kw">as _
-                    </span>; call reg_function_call
+                    <span class="comment">// Reinterpret as i64, using the same bytes as before.
+                    </span>; mov reg_arg1, QWORD runtime <span class="kw">as </span><span class="kw-2">*const </span>Runtime <span class="kw">as </span>i64
+                    ; mov reg_function_call, QWORD Runtime::read <span class="kw">as </span><span class="kw-2">*const </span>() <span class="kw">as </span>i64
+                    ; call reg_function_call
                     ; mov BYTE [reg_data_ptr], reg_return
                 );
             }
             Instruction::Write =&gt; {
                 <span class="macro">dasm!</span>(ops
-                    ; mov reg_arg1, QWORD runtime <span class="kw">as </span><span class="kw-2">*const </span>Runtime <span class="kw">as _
-                    </span>; mov reg_arg2, [reg_data_ptr]
-                    ; mov reg_function_call, QWORD Runtime::write <span class="kw">as </span><span class="kw-2">*const </span>() <span class="kw">as _
-                    </span>; call reg_function_call
+                    <span class="comment">// Reinterpret as i64, using the same bytes as before.
+                    </span>; mov reg_arg1, QWORD runtime <span class="kw">as </span><span class="kw-2">*const </span>Runtime <span class="kw">as </span>i64
+                    ; mov reg_arg2, [reg_data_ptr]
+                    ; mov reg_function_call, QWORD Runtime::write <span class="kw">as </span><span class="kw-2">*const </span>() <span class="kw">as </span>i64
+                    ; call reg_function_call
                 );
             }
             Instruction::JumpIfZero =&gt; {
