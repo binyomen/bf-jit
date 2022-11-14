@@ -137,7 +137,7 @@ fn benchmark(
 ) -> Result<u128, BfError> {
     println!("Benchmarking {name}...");
 
-    const NUM_RUNS: usize = 2;
+    const NUM_RUNS: usize = 10;
     let mut times = [0; NUM_RUNS];
 
     for item in times.iter_mut() {
