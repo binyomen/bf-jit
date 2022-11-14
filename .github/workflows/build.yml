@@ -103,7 +103,6 @@ jobs:
 
   generate-docs:
     runs-on: ubuntu-latest
-    needs: [build, check-format]
     steps:
     - uses: actions/checkout@v3
 
@@ -128,7 +127,7 @@ jobs:
 
   publish-site:
     runs-on: ubuntu-latest
-    needs: generate-docs
+    needs: [build, check-format, generate-docs]
     steps:
     - name: Download docs
       uses: actions/download-artifact@v3
