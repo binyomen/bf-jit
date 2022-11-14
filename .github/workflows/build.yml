@@ -55,22 +55,22 @@ jobs:
       run: cargo install cross
 
     - name: Debug build
-      run: cross build --all-features -vv
+      run: cross build --target ${{ matrix.target }} --all-features -vv
 
     - name: Release build
-      run: cross build --release --all-features -vv
+      run: cross build --target ${{ matrix.target }} --release --all-features -vv
 
     - name: Clippy
-      run: cross clippy --all-features -vv -- -D warnings
+      run: cross clippy --target ${{ matrix.target }} --all-features -vv -- -D warnings
 
     - name: Clippy tests
-      run: cross clippy --all-features -vv --tests -- -D warnings
+      run: cross clippy --target ${{ matrix.target }} --all-features -vv --tests -- -D warnings
 
     - name: Clippy release
-      run: cross clippy --all-features -vv --release -- -D warnings
+      run: cross clippy --target ${{ matrix.target }} --all-features -vv --release -- -D warnings
 
     - name: Test
-      run: cross test --all-features -vv
+      run: cross test --target ${{ matrix.target }} --all-features -vv
 
   check-format:
     runs-on: ubuntu-latest
