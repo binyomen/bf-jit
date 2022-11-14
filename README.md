@@ -2,15 +2,43 @@
 
 A Rust implementation of the [Adventures in JIT compilation] series.
 
-## Results
+## Performance
 
-### Mandelbrot generator results
+### Linux
 
-![Mandelbrot generator results](https://raw.githubusercontent.com/binyomen/bf-jit/main/perf-graph-mandelbrot.png)
+#### x86-64
 
-### Factorization results
+##### Mandelbrot generator
 
-![Factorization results](https://raw.githubusercontent.com/binyomen/bf-jit/main/perf-graph-factor.png)
+![Linux x86-64 Mandelbrot generator perf graph](https://binyomen.github.io/bf-jit/img/linux-x86_64-mandelbrot.png)
+
+##### Factorization
+
+![Linux x86-64 factorization perf graph](https://binyomen.github.io/bf-jit/img/linux-x86_64-factor.png)
+
+### Windows
+
+#### x86-64
+
+##### Mandelbrot generator
+
+![Windows x86-64 Mandelbrot generator perf graph](https://binyomen.github.io/bf-jit/img/windows-x86_64-mandelbrot.png)
+
+##### Factorization
+
+![Windows x86-64 factorization perf graph](https://binyomen.github.io/bf-jit/img/windows-x86_64-factor.png)
+
+### macOS
+
+#### x86-64
+
+##### Mandelbrot generator
+
+![Linux x86-64 Mandelbrot generator perf graph](https://binyomen.github.io/bf-jit/img/macos-x86_64-mandelbrot.png)
+
+##### Factorization
+
+![Linux x86-64 factorization perf graph](https://binyomen.github.io/bf-jit/img/macos-x86_64-factor.png)
 
 ## Docs
 
