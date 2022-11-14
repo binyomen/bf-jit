@@ -12,44 +12,58 @@ use {
 };
 
 #[cfg(target_os = "linux")]
-macro_rules! os_name {
+macro_rules! os_id {
     () => {
         "linux"
     };
 }
 #[cfg(target_os = "macos")]
-macro_rules! os_name {
+macro_rules! os_id {
     () => {
         "macos"
     };
 }
 #[cfg(target_os = "windows")]
-macro_rules! os_name {
+macro_rules! os_id {
     () => {
         "windows"
     };
 }
 
+#[cfg(target_os = "linux")]
+const OS_NAME: &str = "Linux";
+#[cfg(target_os = "macos")]
+const OS_NAME: &str = "macOS";
+#[cfg(target_os = "windows")]
+const OS_NAME: &str = "Windows";
+
 #[cfg(target_arch = "x86_64")]
-macro_rules! arch_name {
+macro_rules! arch_id {
     () => {
         "x86_64"
     };
 }
 #[cfg(target_arch = "x86")]
-macro_rules! arch_name {
+macro_rules! arch_id {
     () => {
         "x86"
     };
 }
 #[cfg(target_arch = "aarch64")]
-macro_rules! arch_name {
+macro_rules! arch_id {
     () => {
         "aarch64"
     };
 }
 
-const GRAPH_NAME_PREFIX: &str = concat!(os_name!(), "-", arch_name!());
+#[cfg(target_arch = "x86_64")]
+const ARCH_NAME: &str = "x86-64";
+#[cfg(target_arch = "x86")]
+const ARCH_NAME: &str = "x86";
+#[cfg(target_arch = "aarch64")]
+const ARCH_NAME: &str = "aarch64";
+
+const GRAPH_NAME_PREFIX: &str = concat!(os_id!(), "-", arch_id!());
 
 const RESOLUTION: (u32, u32) = (1280, 720);
 
@@ -165,7 +179,7 @@ fn create_graph<const N: usize>(
         .right_y_label_area_size(90)
         .margin(20)
         .caption(
-            format!("BF JIT performance comparison ({title})"),
+            format!("BF JIT {title} ({OS_NAME} {ARCH_NAME})"),
             ("sans-serif", 50.0),
         )
         .build_cartesian_2d(names.into_segmented(), 0u128..(max_value_more_10_percent))?;
