@@ -72,6 +72,16 @@ jobs:
     - name: Test
       run: cross test --target ${{ matrix.target }} --all-features -vv
 
+    - name: Generate performance graph
+      if: matrix.rust == 'stable'
+      run: cross run --target ${{ matrix.target }} --release -vv
+
+    - name: Add the graphs to the `graphs` artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: graphs
+        path: graphs
+
   check-format:
     runs-on: ubuntu-latest
     steps:
@@ -91,7 +101,7 @@ jobs:
         command: fmt
         args: -v -- --check
 
-  publish-docs:
+  generate-docs:
     runs-on: ubuntu-latest
     needs: [build, check-format]
     steps:
@@ -110,8 +120,30 @@ jobs:
         command: doc
         args: --no-deps --document-private-items
 
-    - name: Publish the docs to GitHub Pages
+    - name: Add the docs to the `docs` artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: docs
+        path: target/doc
+
+  publish-site:
+    runs-on: ubuntu-latest
+    needs: generate-docs
+    steps:
+    - name: Download docs
+      uses: actions/download-artifact@v3
+      with:
+        name: docs
+        path: site
+
+    - name: Download graphs
+      uses: actions/download-artifact@v3
+      with:
+        name: graphs
+        path: site/img
+
+    - name: Publish to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: target/doc
+        publish_dir: site

@@ -11,6 +11,46 @@ use {
     util::{BfError, RunFunction},
 };
 
+#[cfg(target_os = "linux")]
+macro_rules! os_name {
+    () => {
+        "linux"
+    };
+}
+#[cfg(target_os = "macos")]
+macro_rules! os_name {
+    () => {
+        "macos"
+    };
+}
+#[cfg(target_os = "windows")]
+macro_rules! os_name {
+    () => {
+        "windows"
+    };
+}
+
+#[cfg(target_arch = "x86_64")]
+macro_rules! arch_name {
+    () => {
+        "x86_64"
+    };
+}
+#[cfg(target_arch = "x86")]
+macro_rules! arch_name {
+    () => {
+        "x86"
+    };
+}
+#[cfg(target_arch = "aarch64")]
+macro_rules! arch_name {
+    () => {
+        "aarch64"
+    };
+}
+
+const GRAPH_NAME_PREFIX: &str = concat!(os_name!(), "-", arch_name!());
+
 const RESOLUTION: (u32, u32) = (1280, 720);
 
 const BAR1_COLOR: RGBColor = RGBColor(76, 114, 176);
@@ -38,6 +78,8 @@ impl ImplInfo {
 }
 
 pub fn graph_results() -> Result<(), BfError> {
+    fs::create_dir_all("graphs")?;
+
     // See https://github.com/eliben/code-for-blog/tree/master/2017/bfjit/bf-programs.
     for (short_title, title, input) in [
         ("mandelbrot", "mandelbrot generator", ""),
@@ -108,7 +150,7 @@ fn create_graph<const N: usize>(
     short_title: &str,
     impl_infos: [ImplInfo; N],
 ) -> Result<(), BfError> {
-    let output_filename = format!("perf-graph-{short_title}.png");
+    let output_filename = format!("graphs/{GRAPH_NAME_PREFIX}-{short_title}.png");
 
     let root = BitMapBackend::new(&output_filename, RESOLUTION).into_drawing_area();
     root.fill(&WHITE)?;
