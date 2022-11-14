@@ -147,7 +147,7 @@ fn benchmark(
     }
 
     let sum = times.into_iter().sum::<u128>();
-    let num_runs_u128 = <usize as TryInto<u128>>::try_into(NUM_RUNS)?;
+    let num_runs_u128: u128 = NUM_RUNS.try_into()?;
     Ok(sum / num_runs_u128)
 }
 

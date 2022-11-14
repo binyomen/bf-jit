@@ -143,8 +143,10 @@ fn optimize_loops(seq: AstSeq) -> AstSeq {
         if nodes.is_empty() {
             None
         } else if nodes.iter().all(|node| node == &AstNode::IncPtr) {
+            // Crash if we ever have more than u32::MAX children of a loop.
             Some((true /*forward*/, nodes.len().try_into().unwrap()))
         } else if nodes.iter().all(|node| node == &AstNode::DecPtr) {
+            // Crash if we ever have more than u32::MAX children of a loop.
             Some((false /*forward*/, nodes.len().try_into().unwrap()))
         } else {
             None

@@ -81,7 +81,8 @@ pub fn compile(program: Program, runtime: &mut Runtime) -> BfResult<CompiledProg
 
     // Set the initial value for the data pointer.
     dasm!(ops
-        ; mov reg_data_ptr, QWORD runtime.memory_ptr() as _
+        // Reinterpret as i64, using the same bytes as before.
+        ; mov reg_data_ptr, QWORD runtime.memory_ptr() as i64
     );
 
     let mut open_bracket_stack = vec![];
@@ -90,29 +91,42 @@ pub fn compile(program: Program, runtime: &mut Runtime) -> BfResult<CompiledProg
         match instruction {
             Instruction::IncPtr { count } => {
                 dasm!(ops
-                    ; add reg_data_ptr, DWORD count.try_into()?
+                    // Reinterpret as i32, using the same bytes as before.
+                    ; add reg_data_ptr, DWORD count as i32
                 );
             }
             Instruction::DecPtr { count } => {
                 dasm!(ops
-                    ; sub reg_data_ptr, DWORD count.try_into()?
+                    // Reinterpret as i32, using the same bytes as before.
+                    ; sub reg_data_ptr, DWORD count as i32
                 );
             }
             Instruction::IncData { count } => {
+                // Adding 256 is effectively a nop, since it will wrap around to
+                // the original value. Mod out 256 to get a value between 0 and
+                // 255.
+                let wrapped_count = (count % 256) as u8;
                 dasm!(ops
-                    ; add BYTE [reg_data_ptr], BYTE count.try_into()?
+                    // Reinterpret as i8, using the same bytes as before.
+                    ; add BYTE [reg_data_ptr], BYTE wrapped_count as i8
                 );
             }
             Instruction::DecData { count } => {
+                // Subtracting 256 is effectively a nop, since it will wrap
+                // around to the original value. Mod out 256 to get a value
+                // between 0 and 255.
+                let wrapped_count = (count % 256) as u8;
                 dasm!(ops
-                    ; sub BYTE [reg_data_ptr], BYTE count.try_into()?
+                    // Reinterpret as i8, using the same bytes as before.
+                    ; sub BYTE [reg_data_ptr], BYTE wrapped_count as i8
                 );
             }
             Instruction::Read { count } => {
                 for _ in 0..count {
                     dasm!(ops
-                        ; mov reg_arg1, QWORD runtime as *const Runtime as _
-                        ; mov reg_temp1, QWORD Runtime::read as *const () as _
+                        // Reinterpret as i64, using the same bytes as before.
+                        ; mov reg_arg1, QWORD runtime as *const Runtime as i64
+                        ; mov reg_temp1, QWORD Runtime::read as *const () as i64
                         ; call reg_temp1
                         ; mov BYTE [reg_data_ptr], reg_return
                     );
@@ -121,9 +135,10 @@ pub fn compile(program: Program, runtime: &mut Runtime) -> BfResult<CompiledProg
             Instruction::Write { count } => {
                 for _ in 0..count {
                     dasm!(ops
-                        ; mov reg_arg1, QWORD runtime as *const Runtime as _
+                        // Reinterpret as i64, using the same bytes as before.
+                        ; mov reg_arg1, QWORD runtime as *const Runtime as i64
                         ; mov reg_arg2, [reg_data_ptr]
-                        ; mov reg_temp1, QWORD Runtime::write as *const () as _
+                        ; mov reg_temp1, QWORD Runtime::write as *const () as i64
                         ; call reg_temp1
                     );
                 }
@@ -177,11 +192,13 @@ pub fn compile(program: Program, runtime: &mut Runtime) -> BfResult<CompiledProg
 
                     if forward {
                         dasm!(ops
-                            ; add reg_data_ptr, DWORD amount.try_into()?
+                            // Reinterpret as i32, using the same bytes as before.
+                            ; add reg_data_ptr, DWORD amount as i32
                         );
                     } else {
                         dasm!(ops
-                            ; sub reg_data_ptr, DWORD amount.try_into()?
+                            // Reinterpret as i32, using the same bytes as before.
+                            ; sub reg_data_ptr, DWORD amount as i32
                         );
                     }
 
@@ -204,7 +221,8 @@ pub fn compile(program: Program, runtime: &mut Runtime) -> BfResult<CompiledProg
                         ; mov reg_temp1_low, BYTE [reg_data_ptr]
                     );
 
-                    let amount_i32: i32 = amount.try_into()?;
+                    // Reinterpret as i32, using the same bytes as before.
+                    let amount_i32 = amount as i32;
                     if forward {
                         dasm!(ops
                             ; add BYTE [reg_data_ptr + amount_i32], reg_temp1_low

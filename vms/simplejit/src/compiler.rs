@@ -79,7 +79,8 @@ pub fn compile(program: Program, runtime: &mut Runtime) -> BfResult<CompiledProg
 
     // Set the initial value for the data pointer.
     dasm!(ops
-        ; mov reg_data_ptr, QWORD runtime.memory_ptr() as _
+        // Reinterpret as i64, using the same bytes as before.
+        ; mov reg_data_ptr, QWORD runtime.memory_ptr() as i64
     );
 
     let mut open_bracket_stack = vec![];
@@ -108,17 +109,19 @@ pub fn compile(program: Program, runtime: &mut Runtime) -> BfResult<CompiledProg
             }
             Instruction::Read => {
                 dasm!(ops
-                    ; mov reg_arg1, QWORD runtime as *const Runtime as _
-                    ; mov reg_function_call, QWORD Runtime::read as *const () as _
+                    // Reinterpret as i64, using the same bytes as before.
+                    ; mov reg_arg1, QWORD runtime as *const Runtime as i64
+                    ; mov reg_function_call, QWORD Runtime::read as *const () as i64
                     ; call reg_function_call
                     ; mov BYTE [reg_data_ptr], reg_return
                 );
             }
             Instruction::Write => {
                 dasm!(ops
-                    ; mov reg_arg1, QWORD runtime as *const Runtime as _
+                    // Reinterpret as i64, using the same bytes as before.
+                    ; mov reg_arg1, QWORD runtime as *const Runtime as i64
                     ; mov reg_arg2, [reg_data_ptr]
-                    ; mov reg_function_call, QWORD Runtime::write as *const () as _
+                    ; mov reg_function_call, QWORD Runtime::write as *const () as i64
                     ; call reg_function_call
                 );
             }

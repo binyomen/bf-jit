@@ -1,7 +1,7 @@
 use {
     crate::parser::{Instruction, Program},
     std::io::{Read, Write},
-    util::BfResult,
+    util::{unbalanced_wrapping_add, unbalanced_wrapping_sub, BfResult},
 };
 
 const MEMORY_SIZE: usize = 30000;
@@ -16,14 +16,10 @@ pub fn run(program: Program, stdin: &mut dyn Read, stdout: &mut dyn Write) -> Bf
             Instruction::IncPtr { count } => data_pointer += count,
             Instruction::DecPtr { count } => data_pointer -= count,
             Instruction::IncData { count } => {
-                let mut val = memory[data_pointer];
-                val = val.wrapping_add(count.try_into()?);
-                memory[data_pointer] = val;
+                memory[data_pointer] = unbalanced_wrapping_add(memory[data_pointer], count);
             }
             Instruction::DecData { count } => {
-                let mut val = memory[data_pointer];
-                val = val.wrapping_sub(count.try_into()?);
-                memory[data_pointer] = val;
+                memory[data_pointer] = unbalanced_wrapping_sub(memory[data_pointer], count);
             }
             Instruction::Read { count } => {
                 for _ in 0..count {
