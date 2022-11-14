@@ -352,7 +352,7 @@
 ) -&gt; <span class="prelude-ty">Result</span>&lt;u128, BfError&gt; {
     <span class="macro">println!</span>(<span class="string">&quot;Benchmarking {name}...&quot;</span>);
 
-    <span class="kw">const </span>NUM_RUNS: usize = <span class="number">2</span>;
+    <span class="kw">const </span>NUM_RUNS: usize = <span class="number">10</span>;
     <span class="kw">let </span><span class="kw-2">mut </span>times = [<span class="number">0</span>; NUM_RUNS];
 
     <span class="kw">for </span>item <span class="kw">in </span>times.iter_mut() {

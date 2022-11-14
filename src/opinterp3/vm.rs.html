@@ -148,12 +148,12 @@
             Instruction::DecPtr { count } =&gt; data_pointer -= count,
             Instruction::IncData { count } =&gt; {
                 <span class="kw">let </span><span class="kw-2">mut </span>val = memory[data_pointer];
-                val = val.wrapping_add(count.try_into().unwrap());
+                val = val.wrapping_add(count.try_into()<span class="question-mark">?</span>);
                 memory[data_pointer] = val;
             }
             Instruction::DecData { count } =&gt; {
                 <span class="kw">let </span><span class="kw-2">mut </span>val = memory[data_pointer];
-                val = val.wrapping_sub(count.try_into().unwrap());
+                val = val.wrapping_sub(count.try_into()<span class="question-mark">?</span>);
                 memory[data_pointer] = val;
             }
             Instruction::Read { count } =&gt; {
