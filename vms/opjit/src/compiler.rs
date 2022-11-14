@@ -90,22 +90,22 @@ pub fn compile(program: Program, runtime: &mut Runtime) -> BfResult<CompiledProg
         match instruction {
             Instruction::IncPtr { count } => {
                 dasm!(ops
-                    ; add reg_data_ptr, DWORD count.try_into().unwrap()
+                    ; add reg_data_ptr, DWORD count.try_into()?
                 );
             }
             Instruction::DecPtr { count } => {
                 dasm!(ops
-                    ; sub reg_data_ptr, DWORD count.try_into().unwrap()
+                    ; sub reg_data_ptr, DWORD count.try_into()?
                 );
             }
             Instruction::IncData { count } => {
                 dasm!(ops
-                    ; add BYTE [reg_data_ptr], BYTE count.try_into().unwrap()
+                    ; add BYTE [reg_data_ptr], BYTE count.try_into()?
                 );
             }
             Instruction::DecData { count } => {
                 dasm!(ops
-                    ; sub BYTE [reg_data_ptr], BYTE count.try_into().unwrap()
+                    ; sub BYTE [reg_data_ptr], BYTE count.try_into()?
                 );
             }
             Instruction::Read { count } => {
@@ -177,11 +177,11 @@ pub fn compile(program: Program, runtime: &mut Runtime) -> BfResult<CompiledProg
 
                     if forward {
                         dasm!(ops
-                            ; add reg_data_ptr, DWORD amount.try_into().unwrap()
+                            ; add reg_data_ptr, DWORD amount.try_into()?
                         );
                     } else {
                         dasm!(ops
-                            ; sub reg_data_ptr, DWORD amount.try_into().unwrap()
+                            ; sub reg_data_ptr, DWORD amount.try_into()?
                         );
                     }
 
@@ -204,7 +204,7 @@ pub fn compile(program: Program, runtime: &mut Runtime) -> BfResult<CompiledProg
                         ; mov reg_temp1_low, BYTE [reg_data_ptr]
                     );
 
-                    let amount_i32: i32 = amount.try_into().unwrap();
+                    let amount_i32: i32 = amount.try_into()?;
                     if forward {
                         dasm!(ops
                             ; add BYTE [reg_data_ptr + amount_i32], reg_temp1_low
