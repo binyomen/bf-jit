@@ -19,6 +19,8 @@ A Rust implementation of the [Adventures in JIT compilation] series.
 - [opinterp docs]
 - [opinterp2 docs]
 - [opinterp3 docs]
+- [simplejit docs]
+- [opjit docs]
 
 <!-- LINKS -->
 [Adventures in JIT compilation]: https://eli.thegreenplace.net/2017/adventures-in-jit-compilation-part-1-an-interpreter
@@ -27,3 +29,5 @@ A Rust implementation of the [Adventures in JIT compilation] series.
 [opinterp docs]: https://binyomen.github.io/bf-jit/opinterp/
 [opinterp2 docs]: https://binyomen.github.io/bf-jit/opinterp2/
 [opinterp3 docs]: https://binyomen.github.io/bf-jit/opinterp3/
+[simplejit docs]: https://binyomen.github.io/bf-jit/simplejit/
+[opjit docs]: https://binyomen.github.io/bf-jit/opjit/
