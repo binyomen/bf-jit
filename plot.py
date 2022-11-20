@@ -9,6 +9,7 @@ import seaborn
 DATA_DIR = 'bench-data'
 PLOT_DIR = 'plots'
 
+os.mkdir(PLOT_DIR)
 seaborn.set_theme()
 
 for filename in os.listdir(DATA_DIR):
