@@ -276,11 +276,11 @@
     source_code: <span class="kw-2">&amp;</span>str,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;(), BfError&gt; {
     <span class="kw">let </span>impl_infos = [
-        <span class="comment">// ImplInfo::new(&quot;simpleinterp&quot;, &amp;simpleinterp::run, source_code, input)?,
-        // ImplInfo::new(&quot;opinterp&quot;, &amp;opinterp::run, source_code, input)?,
-        // ImplInfo::new(&quot;opinterp2&quot;, &amp;opinterp2::run, source_code, input)?,
-        // ImplInfo::new(&quot;opinterp3&quot;, &amp;opinterp3::run, source_code, input)?,
-        </span>ImplInfo::new(<span class="string">&quot;simplejit&quot;</span>, <span class="kw-2">&amp;</span>simplejit::run, source_code, input)<span class="question-mark">?</span>,
+        ImplInfo::new(<span class="string">&quot;simpleinterp&quot;</span>, <span class="kw-2">&amp;</span>simpleinterp::run, source_code, input)<span class="question-mark">?</span>,
+        ImplInfo::new(<span class="string">&quot;opinterp&quot;</span>, <span class="kw-2">&amp;</span>opinterp::run, source_code, input)<span class="question-mark">?</span>,
+        ImplInfo::new(<span class="string">&quot;opinterp2&quot;</span>, <span class="kw-2">&amp;</span>opinterp2::run, source_code, input)<span class="question-mark">?</span>,
+        ImplInfo::new(<span class="string">&quot;opinterp3&quot;</span>, <span class="kw-2">&amp;</span>opinterp3::run, source_code, input)<span class="question-mark">?</span>,
+        ImplInfo::new(<span class="string">&quot;simplejit&quot;</span>, <span class="kw-2">&amp;</span>simplejit::run, source_code, input)<span class="question-mark">?</span>,
         ImplInfo::new(<span class="string">&quot;opjit&quot;</span>, <span class="kw-2">&amp;</span>opjit::run, source_code, input)<span class="question-mark">?</span>,
     ];
 
