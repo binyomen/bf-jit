@@ -133,7 +133,11 @@ fn benchmark(
 
     let sum = times.into_iter().sum::<u128>();
     let num_runs_u128: u128 = NUM_RUNS.try_into()?;
-    Ok(sum / num_runs_u128)
+
+    let result = sum / num_runs_u128;
+    println!("Completed in {result}ms on average over {NUM_RUNS} runs.");
+
+    Ok(result)
 }
 
 fn output_data<const N: usize>(
