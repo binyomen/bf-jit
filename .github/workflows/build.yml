@@ -145,7 +145,7 @@ jobs:
         pip install -r requirements.txt
 
     - name: Generate plots
-      run: ./plots.py
+      run: ./plot.py
 
     - name: Add the plots to the `plots` artifact
       uses: actions/upload-artifact@v3
