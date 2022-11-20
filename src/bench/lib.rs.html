@@ -173,55 +173,7 @@
 <span id="173">173</span>
 <span id="174">174</span>
 <span id="175">175</span>
-<span id="176">176</span>
-<span id="177">177</span>
-<span id="178">178</span>
-<span id="179">179</span>
-<span id="180">180</span>
-<span id="181">181</span>
-<span id="182">182</span>
-<span id="183">183</span>
-<span id="184">184</span>
-<span id="185">185</span>
-<span id="186">186</span>
-<span id="187">187</span>
-<span id="188">188</span>
-<span id="189">189</span>
-<span id="190">190</span>
-<span id="191">191</span>
-<span id="192">192</span>
-<span id="193">193</span>
-<span id="194">194</span>
-<span id="195">195</span>
-<span id="196">196</span>
-<span id="197">197</span>
-<span id="198">198</span>
-<span id="199">199</span>
-<span id="200">200</span>
-<span id="201">201</span>
-<span id="202">202</span>
-<span id="203">203</span>
-<span id="204">204</span>
-<span id="205">205</span>
-<span id="206">206</span>
-<span id="207">207</span>
-<span id="208">208</span>
-<span id="209">209</span>
-<span id="210">210</span>
-<span id="211">211</span>
-<span id="212">212</span>
-<span id="213">213</span>
-<span id="214">214</span>
-<span id="215">215</span>
 </pre><pre class="rust"><code><span class="kw">use </span>{
-    plotters::{
-        backend::BitMapBackend,
-        chart::ChartBuilder,
-        coord::ranged1d::{IntoSegmentedCoord, SegmentValue},
-        drawing::IntoDrawingArea,
-        series::Histogram,
-        style::{Color, RGBColor, WHITE},
-    },
     std::{fs, time::Instant},
     util::{BfError, RunFunction},
 };
@@ -278,16 +230,9 @@
 <span class="attribute">#[cfg(target_arch = <span class="string">&quot;aarch64&quot;</span>)]
 </span><span class="kw">const </span>ARCH_NAME: <span class="kw-2">&amp;</span>str = <span class="string">&quot;aarch64&quot;</span>;
 
-<span class="kw">const </span>GRAPH_NAME_PREFIX: <span class="kw-2">&amp;</span>str = <span class="macro">concat!</span>(<span class="macro">os_id!</span>(), <span class="string">&quot;-&quot;</span>, <span class="macro">arch_id!</span>());
+<span class="kw">const </span>DATA_FILE_PREFIX: <span class="kw-2">&amp;</span>str = <span class="macro">concat!</span>(<span class="macro">os_id!</span>(), <span class="string">&quot;-&quot;</span>, <span class="macro">arch_id!</span>());
 
-<span class="kw">const </span>RESOLUTION: (u32, u32) = (<span class="number">1280</span>, <span class="number">720</span>);
-
-<span class="kw">const </span>BAR1_COLOR: RGBColor = RGBColor(<span class="number">76</span>, <span class="number">114</span>, <span class="number">176</span>);
-<span class="kw">const </span>BAR2_COLOR: RGBColor = RGBColor(<span class="number">191</span>, <span class="number">191</span>, <span class="number">0</span>);
-<span class="kw">const </span>BAR3_COLOR: RGBColor = RGBColor(<span class="number">255</span>, <span class="number">165</span>, <span class="number">0</span>);
-<span class="kw">const </span>BAR4_COLOR: RGBColor = RGBColor(<span class="number">255</span>, <span class="number">0</span>, <span class="number">0</span>);
-<span class="kw">const </span>BAR5_COLOR: RGBColor = RGBColor(<span class="number">0</span>, <span class="number">128</span>, <span class="number">0</span>);
-<span class="kw">const </span>BAR6_COLOR: RGBColor = RGBColor(<span class="number">144</span>, <span class="number">238</span>, <span class="number">144</span>);
+<span class="kw">const </span>BENCH_DATA_DIR_NAME: <span class="kw-2">&amp;</span>str = <span class="string">&quot;bench-data&quot;</span>;
 
 <span class="kw">struct </span>ImplInfo {
     name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str,
@@ -306,8 +251,8 @@
     }
 }
 
-<span class="kw">pub fn </span>graph_results() -&gt; <span class="prelude-ty">Result</span>&lt;(), BfError&gt; {
-    fs::create_dir_all(<span class="string">&quot;graphs&quot;</span>)<span class="question-mark">?</span>;
+<span class="kw">pub fn </span>measure_results() -&gt; <span class="prelude-ty">Result</span>&lt;(), BfError&gt; {
+    fs::create_dir_all(BENCH_DATA_DIR_NAME)<span class="question-mark">?</span>;
 
     <span class="comment">// See https://github.com/eliben/code-for-blog/tree/master/2017/bfjit/bf-programs.
     </span><span class="kw">for </span>(short_title, title, input) <span class="kw">in </span>[
@@ -318,28 +263,28 @@
         <span class="macro">println!</span>(<span class="string">&quot;Measuring file {filepath}...&quot;</span>);
         <span class="kw">let </span>source_code = fs::read_to_string(filepath)<span class="question-mark">?</span>;
 
-        graph_results_for_file(title, short_title, input, <span class="kw-2">&amp;</span>source_code)<span class="question-mark">?</span>;
+        measure_results_for_file(title, short_title, input, <span class="kw-2">&amp;</span>source_code)<span class="question-mark">?</span>;
     }
 
     <span class="prelude-val">Ok</span>(())
 }
 
-<span class="kw">fn </span>graph_results_for_file(
+<span class="kw">fn </span>measure_results_for_file(
     title: <span class="kw-2">&amp;</span>str,
     short_title: <span class="kw-2">&amp;</span>str,
     input: <span class="kw-2">&amp;</span>str,
     source_code: <span class="kw-2">&amp;</span>str,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;(), BfError&gt; {
     <span class="kw">let </span>impl_infos = [
-        ImplInfo::new(<span class="string">&quot;simpleinterp&quot;</span>, <span class="kw-2">&amp;</span>simpleinterp::run, source_code, input)<span class="question-mark">?</span>,
-        ImplInfo::new(<span class="string">&quot;opinterp&quot;</span>, <span class="kw-2">&amp;</span>opinterp::run, source_code, input)<span class="question-mark">?</span>,
-        ImplInfo::new(<span class="string">&quot;opinterp2&quot;</span>, <span class="kw-2">&amp;</span>opinterp2::run, source_code, input)<span class="question-mark">?</span>,
-        ImplInfo::new(<span class="string">&quot;opinterp3&quot;</span>, <span class="kw-2">&amp;</span>opinterp3::run, source_code, input)<span class="question-mark">?</span>,
-        ImplInfo::new(<span class="string">&quot;simplejit&quot;</span>, <span class="kw-2">&amp;</span>simplejit::run, source_code, input)<span class="question-mark">?</span>,
+        <span class="comment">// ImplInfo::new(&quot;simpleinterp&quot;, &amp;simpleinterp::run, source_code, input)?,
+        // ImplInfo::new(&quot;opinterp&quot;, &amp;opinterp::run, source_code, input)?,
+        // ImplInfo::new(&quot;opinterp2&quot;, &amp;opinterp2::run, source_code, input)?,
+        // ImplInfo::new(&quot;opinterp3&quot;, &amp;opinterp3::run, source_code, input)?,
+        </span>ImplInfo::new(<span class="string">&quot;simplejit&quot;</span>, <span class="kw-2">&amp;</span>simplejit::run, source_code, input)<span class="question-mark">?</span>,
         ImplInfo::new(<span class="string">&quot;opjit&quot;</span>, <span class="kw-2">&amp;</span>opjit::run, source_code, input)<span class="question-mark">?</span>,
     ];
 
-    create_graph(title, short_title, impl_infos)<span class="question-mark">?</span>;
+    output_data(title, short_title, impl_infos)<span class="question-mark">?</span>;
 
     <span class="prelude-val">Ok</span>(())
 }
@@ -366,65 +311,40 @@
     <span class="prelude-val">Ok</span>(sum / num_runs_u128)
 }
 
-<span class="kw">fn </span>segmented_value_to_inner&lt;T&gt;(value: <span class="kw-2">&amp;</span>SegmentValue&lt;T&gt;) -&gt; <span class="kw-2">&amp;</span>T {
-    <span class="kw">match </span>value {
-        SegmentValue::Exact(t) =&gt; t,
-        SegmentValue::CenterOf(t) =&gt; t,
-        SegmentValue::Last =&gt; <span class="macro">unreachable!</span>(),
-    }
-}
-
-<span class="kw">fn </span>create_graph&lt;<span class="kw">const </span>N: usize&gt;(
+<span class="kw">fn </span>output_data&lt;<span class="kw">const </span>N: usize&gt;(
     title: <span class="kw-2">&amp;</span>str,
     short_title: <span class="kw-2">&amp;</span>str,
     impl_infos: [ImplInfo; N],
 ) -&gt; <span class="prelude-ty">Result</span>&lt;(), BfError&gt; {
-    <span class="kw">let </span>output_filename = <span class="macro">format!</span>(<span class="string">&quot;graphs/{GRAPH_NAME_PREFIX}-{short_title}.png&quot;</span>);
+    <span class="kw">let </span><span class="kw-2">mut </span>output_json = String::new();
+    output_json.push_str(<span class="string">&quot;{\n&quot;</span>);
 
-    <span class="kw">let </span>root = BitMapBackend::new(<span class="kw-2">&amp;</span>output_filename, RESOLUTION).into_drawing_area();
-    root.fill(<span class="kw-2">&amp;</span>WHITE)<span class="question-mark">?</span>;
+    output_json.push_str(<span class="kw-2">&amp;</span><span class="macro">format!</span>(
+        <span class="string">&quot;    \&quot;title\&quot;: \&quot;BF JIT {title} ({OS_NAME} {ARCH_NAME})\&quot;,\n&quot;
+    </span>));
 
-    <span class="kw">let </span>names = impl_infos.iter().map(|x| x.name).collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
-    <span class="kw">let </span>max_value = impl_infos.iter().map(|x| x.millis).max().unwrap();
-    <span class="kw">let </span>max_value_more_10_percent = ((max_value <span class="kw">as </span>f64) * <span class="number">1.1</span>) <span class="kw">as </span>u128;
+    output_json.push_str(<span class="string">&quot;    \&quot;data\&quot;: [\n&quot;</span>);
 
-    <span class="kw">let </span><span class="kw-2">mut </span>chart = ChartBuilder::on(<span class="kw-2">&amp;</span>root)
-        .x_label_area_size(<span class="number">65</span>)
-        .y_label_area_size(<span class="number">90</span>)
-        .right_y_label_area_size(<span class="number">90</span>)
-        .margin(<span class="number">20</span>)
-        .caption(
-            <span class="macro">format!</span>(<span class="string">&quot;BF JIT {title} ({OS_NAME} {ARCH_NAME})&quot;</span>),
-            (<span class="string">&quot;sans-serif&quot;</span>, <span class="number">50.0</span>),
-        )
-        .build_cartesian_2d(names.into_segmented(), <span class="number">0u128</span>..(max_value_more_10_percent))<span class="question-mark">?</span>;
-    chart
-        .configure_mesh()
-        .disable_x_mesh()
-        .bold_line_style(WHITE.mix(<span class="number">0.3</span>))
-        .y_desc(<span class="string">&quot;Average runtime (ms)&quot;</span>)
-        .x_desc(<span class="string">&quot;Implementation&quot;</span>)
-        .axis_desc_style((<span class="string">&quot;sans-serif&quot;</span>, <span class="number">25</span>))
-        .label_style((<span class="string">&quot;sans-serif&quot;</span>, <span class="number">20</span>))
-        .x_label_formatter(<span class="kw-2">&amp;</span>|value| segmented_value_to_inner(value).to_string())
-        .draw()<span class="question-mark">?</span>;
+    <span class="kw">let </span>num_implementations = impl_infos.len();
+    <span class="kw">for </span>(i, info) <span class="kw">in </span>impl_infos.into_iter().enumerate() {
+        <span class="kw">let </span>comma = <span class="kw">if </span>i == num_implementations - <span class="number">1 </span>{
+            <span class="string">&quot;&quot;
+        </span>} <span class="kw">else </span>{
+            <span class="string">&quot;,&quot;
+        </span>};
+        output_json.push_str(<span class="kw-2">&amp;</span><span class="macro">format!</span>(
+            <span class="string">&quot;        {{\&quot;implementation\&quot;: \&quot;{name}\&quot;, \&quot;milliseconds\&quot;: {millis}}}{comma}\n&quot;</span>,
+            name = info.name,
+            millis = info.millis
+        ));
+    }
 
-    chart.draw_series(
-        Histogram::vertical(<span class="kw-2">&amp;</span>chart)
-            .style_func(|value, _millis| <span class="kw">match </span><span class="kw-2">**</span>segmented_value_to_inner(value) {
-                <span class="string">&quot;simpleinterp&quot; </span>=&gt; BAR1_COLOR.filled(),
-                <span class="string">&quot;opinterp&quot; </span>=&gt; BAR2_COLOR.filled(),
-                <span class="string">&quot;opinterp2&quot; </span>=&gt; BAR3_COLOR.filled(),
-                <span class="string">&quot;opinterp3&quot; </span>=&gt; BAR4_COLOR.filled(),
-                <span class="string">&quot;simplejit&quot; </span>=&gt; BAR5_COLOR.filled(),
-                <span class="string">&quot;opjit&quot; </span>=&gt; BAR6_COLOR.filled(),
-                <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
-            })
-            .data(impl_infos.iter().map(|x| (<span class="kw-2">&amp;</span>x.name, x.millis))),
-    )<span class="question-mark">?</span>;
+    output_json.push_str(<span class="string">&quot;    ]\n&quot;</span>);
+    output_json.push_str(<span class="string">&quot;}\n&quot;</span>);
 
-    root.present()<span class="question-mark">?</span>;
-    <span class="macro">println!</span>(<span class="string">&quot;Performance graph has been saved to {output_filename}.&quot;</span>);
+    <span class="kw">let </span>output_filename = <span class="macro">format!</span>(<span class="string">&quot;{BENCH_DATA_DIR_NAME}/{DATA_FILE_PREFIX}-{short_title}.json&quot;</span>);
+    fs::write(<span class="kw-2">&amp;</span>output_filename, output_json)<span class="question-mark">?</span>;
+    <span class="macro">println!</span>(<span class="string">&quot;Benchmark data has been saved to {output_filename}.&quot;</span>);
 
     <span class="prelude-val">Ok</span>(())
 }
