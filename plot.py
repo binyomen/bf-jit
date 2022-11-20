@@ -36,4 +36,7 @@ for filename in os.listdir(DATA_DIR):
         plot.bar_label(c)
 
     image_file_name = f'{os.path.splitext(filename)[0]}.png'
-    plot.get_figure().savefig(os.path.join(PLOT_DIR, image_file_name))
+    plot.get_figure().savefig(
+        os.path.join(PLOT_DIR, image_file_name),
+        bbox_inches = 'tight',
+    )
