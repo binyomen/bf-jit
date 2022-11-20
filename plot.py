@@ -15,6 +15,9 @@ if not os.path.exists(PLOT_DIR):
 seaborn.set_theme()
 
 for filename in os.listdir(DATA_DIR):
+    pyplot.clf()
+    pyplot.tight_layout()
+
     path = os.path.join(DATA_DIR, filename)
 
     with open(path) as f:
@@ -34,5 +37,3 @@ for filename in os.listdir(DATA_DIR):
 
     image_file_name = f'{os.path.splitext(filename)[0]}.png'
     plot.get_figure().savefig(os.path.join(PLOT_DIR, image_file_name))
-
-    pyplot.clf()
