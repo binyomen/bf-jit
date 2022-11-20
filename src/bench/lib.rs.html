@@ -173,6 +173,10 @@
 <span id="173">173</span>
 <span id="174">174</span>
 <span id="175">175</span>
+<span id="176">176</span>
+<span id="177">177</span>
+<span id="178">178</span>
+<span id="179">179</span>
 </pre><pre class="rust"><code><span class="kw">use </span>{
     std::{fs, time::Instant},
     util::{BfError, RunFunction},
@@ -308,7 +312,11 @@
 
     <span class="kw">let </span>sum = times.into_iter().sum::&lt;u128&gt;();
     <span class="kw">let </span>num_runs_u128: u128 = NUM_RUNS.try_into()<span class="question-mark">?</span>;
-    <span class="prelude-val">Ok</span>(sum / num_runs_u128)
+
+    <span class="kw">let </span>result = sum / num_runs_u128;
+    <span class="macro">println!</span>(<span class="string">&quot;Completed in {result}ms on average over {NUM_RUNS} runs.&quot;</span>);
+
+    <span class="prelude-val">Ok</span>(result)
 }
 
 <span class="kw">fn </span>output_data&lt;<span class="kw">const </span>N: usize&gt;(
