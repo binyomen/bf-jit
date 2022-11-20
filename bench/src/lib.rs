@@ -1,12 +1,4 @@
 use {
-    plotters::{
-        backend::BitMapBackend,
-        chart::ChartBuilder,
-        coord::ranged1d::{IntoSegmentedCoord, SegmentValue},
-        drawing::IntoDrawingArea,
-        series::Histogram,
-        style::{Color, RGBColor, WHITE},
-    },
     std::{fs, time::Instant},
     util::{BfError, RunFunction},
 };
@@ -63,16 +55,9 @@ const ARCH_NAME: &str = "x86";
 #[cfg(target_arch = "aarch64")]
 const ARCH_NAME: &str = "aarch64";
 
-const GRAPH_NAME_PREFIX: &str = concat!(os_id!(), "-", arch_id!());
+const DATA_FILE_PREFIX: &str = concat!(os_id!(), "-", arch_id!());
 
-const RESOLUTION: (u32, u32) = (1280, 720);
-
-const BAR1_COLOR: RGBColor = RGBColor(76, 114, 176);
-const BAR2_COLOR: RGBColor = RGBColor(191, 191, 0);
-const BAR3_COLOR: RGBColor = RGBColor(255, 165, 0);
-const BAR4_COLOR: RGBColor = RGBColor(255, 0, 0);
-const BAR5_COLOR: RGBColor = RGBColor(0, 128, 0);
-const BAR6_COLOR: RGBColor = RGBColor(144, 238, 144);
+const BENCH_DATA_DIR_NAME: &str = "bench-data";
 
 struct ImplInfo {
     name: &'static str,
@@ -91,8 +76,8 @@ impl ImplInfo {
     }
 }
 
-pub fn graph_results() -> Result<(), BfError> {
-    fs::create_dir_all("graphs")?;
+pub fn measure_results() -> Result<(), BfError> {
+    fs::create_dir_all(BENCH_DATA_DIR_NAME)?;
 
     // See https://github.com/eliben/code-for-blog/tree/master/2017/bfjit/bf-programs.
     for (short_title, title, input) in [
@@ -103,13 +88,13 @@ pub fn graph_results() -> Result<(), BfError> {
         println!("Measuring file {filepath}...");
         let source_code = fs::read_to_string(filepath)?;
 
-        graph_results_for_file(title, short_title, input, &source_code)?;
+        measure_results_for_file(title, short_title, input, &source_code)?;
     }
 
     Ok(())
 }
 
-fn graph_results_for_file(
+fn measure_results_for_file(
     title: &str,
     short_title: &str,
     input: &str,
@@ -124,7 +109,7 @@ fn graph_results_for_file(
         ImplInfo::new("opjit", &opjit::run, source_code, input)?,
     ];
 
-    create_graph(title, short_title, impl_infos)?;
+    output_data(title, short_title, impl_infos)?;
 
     Ok(())
 }
@@ -151,65 +136,40 @@ fn benchmark(
     Ok(sum / num_runs_u128)
 }
 
-fn segmented_value_to_inner<T>(value: &SegmentValue<T>) -> &T {
-    match value {
-        SegmentValue::Exact(t) => t,
-        SegmentValue::CenterOf(t) => t,
-        SegmentValue::Last => unreachable!(),
-    }
-}
-
-fn create_graph<const N: usize>(
+fn output_data<const N: usize>(
     title: &str,
     short_title: &str,
     impl_infos: [ImplInfo; N],
 ) -> Result<(), BfError> {
-    let output_filename = format!("graphs/{GRAPH_NAME_PREFIX}-{short_title}.png");
+    let mut output_json = String::new();
+    output_json.push_str("{\n");
 
-    let root = BitMapBackend::new(&output_filename, RESOLUTION).into_drawing_area();
-    root.fill(&WHITE)?;
+    output_json.push_str(&format!(
+        "    \"title\": \"BF JIT {title} ({OS_NAME} {ARCH_NAME})\",\n"
+    ));
 
-    let names = impl_infos.iter().map(|x| x.name).collect::<Vec<_>>();
-    let max_value = impl_infos.iter().map(|x| x.millis).max().unwrap();
-    let max_value_more_10_percent = ((max_value as f64) * 1.1) as u128;
+    output_json.push_str("    \"data\": [\n");
 
-    let mut chart = ChartBuilder::on(&root)
-        .x_label_area_size(65)
-        .y_label_area_size(90)
-        .right_y_label_area_size(90)
-        .margin(20)
-        .caption(
-            format!("BF JIT {title} ({OS_NAME} {ARCH_NAME})"),
-            ("sans-serif", 50.0),
-        )
-        .build_cartesian_2d(names.into_segmented(), 0u128..(max_value_more_10_percent))?;
-    chart
-        .configure_mesh()
-        .disable_x_mesh()
-        .bold_line_style(WHITE.mix(0.3))
-        .y_desc("Average runtime (ms)")
-        .x_desc("Implementation")
-        .axis_desc_style(("sans-serif", 25))
-        .label_style(("sans-serif", 20))
-        .x_label_formatter(&|value| segmented_value_to_inner(value).to_string())
-        .draw()?;
+    let num_implementations = impl_infos.len();
+    for (i, info) in impl_infos.into_iter().enumerate() {
+        let comma = if i == num_implementations - 1 {
+            ""
+        } else {
+            ","
+        };
+        output_json.push_str(&format!(
+            "        {{\"implementation\": \"{name}\", \"milliseconds\": {millis}}}{comma}\n",
+            name = info.name,
+            millis = info.millis
+        ));
+    }
 
-    chart.draw_series(
-        Histogram::vertical(&chart)
-            .style_func(|value, _millis| match **segmented_value_to_inner(value) {
-                "simpleinterp" => BAR1_COLOR.filled(),
-                "opinterp" => BAR2_COLOR.filled(),
-                "opinterp2" => BAR3_COLOR.filled(),
-                "opinterp3" => BAR4_COLOR.filled(),
-                "simplejit" => BAR5_COLOR.filled(),
-                "opjit" => BAR6_COLOR.filled(),
-                _ => unreachable!(),
-            })
-            .data(impl_infos.iter().map(|x| (&x.name, x.millis))),
-    )?;
+    output_json.push_str("    ]\n");
+    output_json.push_str("}\n");
 
-    root.present()?;
-    println!("Performance graph has been saved to {output_filename}.");
+    let output_filename = format!("{BENCH_DATA_DIR_NAME}/{DATA_FILE_PREFIX}-{short_title}.json");
+    fs::write(&output_filename, output_json)?;
+    println!("Benchmark data has been saved to {output_filename}.");
 
     Ok(())
 }

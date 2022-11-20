@@ -5,4 +5,3 @@ edition = '2021'
 
 [dependencies]
 dynasmrt = "1.2.3"
-plotters = '0.3.4'

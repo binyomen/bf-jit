@@ -72,15 +72,16 @@ jobs:
     - name: Test
       run: cross test --target ${{ matrix.target }} --all-features -vv
 
-    - name: Generate performance graph
+    - name: Generate benchmark data
       if: matrix.rust == 'stable'
       run: cross run --target ${{ matrix.target }} --release -vv
 
-    - name: Add the graphs to the `graphs` artifact
+    - name: Add the benchmark data to the `bench-data` artifact
+      if: matrix.rust == 'stable'
       uses: actions/upload-artifact@v3
       with:
-        name: graphs
-        path: graphs
+        name: bench-data
+        path: bench-data
 
   check-format:
     runs-on: ubuntu-latest
@@ -125,9 +126,36 @@ jobs:
         name: docs
         path: target/doc
 
+  generate-plots:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Download benchmark data
+      uses: actions/download-artifact@v3
+      with:
+        name: bench-data
+        path: bench-data
+
+    - name: Install python dependencies
+      run: |
+        python -m venv .venv
+        source .venv/bin/activate
+        pip install -r requirements.txt
+
+    - name: Generate plots
+      run: ./plots.py
+
+    - name: Add the plots to the `plots` artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: plots
+        path: plots
+
   publish-site:
     runs-on: ubuntu-latest
-    needs: [build, check-format, generate-docs]
+    needs: [build, check-format, generate-docs, generate-plots]
     steps:
     - name: Download docs
       uses: actions/download-artifact@v3
@@ -135,10 +163,10 @@ jobs:
         name: docs
         path: site
 
-    - name: Download graphs
+    - name: Download plots
       uses: actions/download-artifact@v3
       with:
-        name: graphs
+        name: plots
         path: site/img
 
     - name: Publish to GitHub Pages

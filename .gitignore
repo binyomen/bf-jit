@@ -1,2 +1,4 @@
 /target/
-/graphs/
+/.venv/
+/bench-data/
+/plots/

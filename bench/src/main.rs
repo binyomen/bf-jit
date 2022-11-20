@@ -1,5 +1,5 @@
 use util::BfError;
 
 fn main() -> Result<(), BfError> {
-    bench::graph_results()
+    bench::measure_results()
 }
