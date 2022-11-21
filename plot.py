@@ -31,9 +31,17 @@ for filename in os.listdir(DATA_DIR):
         ylabel = 'Average runtime (ms)',
     )
 
-    # Add values on top of the bars.
-    for c in plot.containers:
-        plot.bar_label(c)
+    # Add values on top of the bars, including percentage difference for all
+    # bars after the first.
+    container = plot.containers[0]
+    milliseconds = [item['milliseconds'] for item in run_info['data']]
+    plot.bar_label(
+        container,
+        [milliseconds[0]] +
+        [f'{y1}\n{((y1 - y0) / y0) * 100:+.2f}%'
+            for y0, y1 in zip(milliseconds[:-1], milliseconds[1:])
+        ],
+    )
 
     image_file_name = f'{os.path.splitext(filename)[0]}.png'
     plot.get_figure().savefig(
