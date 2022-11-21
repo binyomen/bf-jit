@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["compile",""]],"macro":[["dasm",""]],"struct":[["CompiledProgram",""],["LabelPair",""]]};
+window.SIDEBAR_ITEMS = {"constant":[["REG_DATA_POINTER_NON_VOLATILE",""],["STACK_OFFSET",""]],"fn":[["compile",""]],"macro":[["dasm",""]],"struct":[["CompiledProgram",""],["LabelPair",""]]};
