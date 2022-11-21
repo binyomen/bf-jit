@@ -3,7 +3,10 @@ use {
     dynasmrt::{dynasm, DynasmApi, DynasmLabelApi},
     util::{
         dasm,
-        jit::{Assembler, CompiledProgram, Runtime, REG_DATA_POINTER_NON_VOLATILE, STACK_OFFSET},
+        jit::{
+            set_data_pointer_initial_value, Assembler, CompiledProgram, Runtime,
+            REG_DATA_POINTER_NON_VOLATILE, STACK_OFFSET,
+        },
         BfError, BfResult,
     },
 };
@@ -30,17 +33,7 @@ pub fn compile(program: Program, runtime: &mut Runtime) -> BfResult<CompiledProg
         );
     }
 
-    // Set the initial value for the data pointer.
-    #[cfg(target_arch = "x86_64")]
-    dasm!(ops
-        // Reinterpret as i64, using the same bytes as before.
-        ; mov reg_data_ptr, QWORD runtime.memory_ptr() as i64
-    );
-    #[cfg(target_arch = "x86")]
-    dasm!(ops
-        // Reinterpret as i32, using the same bytes as before.
-        ; mov reg_data_ptr, DWORD runtime.memory_ptr() as i32
-    );
+    set_data_pointer_initial_value(&mut ops, runtime);
 
     let mut open_bracket_stack = vec![];
 

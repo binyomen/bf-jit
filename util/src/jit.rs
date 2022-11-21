@@ -1,6 +1,6 @@
 use {
     crate::error::BfResult,
-    dynasmrt::{AssemblyOffset, ExecutableBuffer},
+    dynasmrt::{dynasm, AssemblyOffset, DynasmApi, ExecutableBuffer},
     std::{
         io::{Read, Write},
         mem,
@@ -83,6 +83,19 @@ pub const REG_DATA_POINTER_NON_VOLATILE: bool = true;
 // 48 bytes.
 #[cfg(all(target_os = "windows", target_arch = "x86_64"))]
 pub const STACK_OFFSET: i32 = 0x20;
+
+pub fn set_data_pointer_initial_value(ops: &mut Assembler, runtime: &mut Runtime) {
+    #[cfg(target_arch = "x86_64")]
+    dasm!(ops
+        // Reinterpret as i64, using the same bytes as before.
+        ; mov reg_data_ptr, QWORD runtime.memory_ptr() as i64
+    );
+    #[cfg(target_arch = "x86")]
+    dasm!(ops
+        // Reinterpret as i32, using the same bytes as before.
+        ; mov reg_data_ptr, DWORD runtime.memory_ptr() as i32
+    );
+}
 
 pub struct CompiledProgram {
     buffer: ExecutableBuffer,
