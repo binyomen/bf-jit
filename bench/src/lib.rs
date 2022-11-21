@@ -38,7 +38,7 @@ macro_rules! arch_id {
 #[cfg(target_arch = "x86")]
 macro_rules! arch_id {
     () => {
-        "x86"
+        "i686"
     };
 }
 #[cfg(target_arch = "aarch64")]
@@ -51,7 +51,7 @@ macro_rules! arch_id {
 #[cfg(target_arch = "x86_64")]
 const ARCH_NAME: &str = "x86-64";
 #[cfg(target_arch = "x86")]
-const ARCH_NAME: &str = "x86";
+const ARCH_NAME: &str = "i686";
 #[cfg(target_arch = "aarch64")]
 const ARCH_NAME: &str = "aarch64";
 

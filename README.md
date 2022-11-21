@@ -28,6 +28,7 @@ approach when possible.
 | OS      | Architecture |
 |---------|--------------|
 | Linux   | x86-64       |
+| Linux   | i686         |
 | Windows | x86-64       |
 | macOS   | x86-64       |
 
@@ -126,6 +127,16 @@ We saw this provide around 60–70% speedups over [simplejit].
 ##### Factorization
 
 ![Linux x86-64 factorization perf graph](https://binyomen.github.io/bf-jit/img/linux-x86_64-factor.png)
+
+#### i686
+
+##### Mandelbrot generator
+
+![Linux i686 Mandelbrot generator perf graph](https://binyomen.github.io/bf-jit/img/linux-i686-mandelbrot.png)
+
+##### Factorization
+
+![Linux i686 factorization perf graph](https://binyomen.github.io/bf-jit/img/linux-i686-factor.png)
 
 ### Windows
 
