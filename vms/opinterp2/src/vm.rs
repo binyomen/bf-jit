@@ -1,7 +1,10 @@
 use {
     crate::parser::{Instruction, Program},
     std::io::{Read, Write},
-    util::{unbalanced_wrapping_add, unbalanced_wrapping_sub, BfResult},
+    util::{
+        math::{unbalanced_wrapping_add, unbalanced_wrapping_sub},
+        BfResult,
+    },
 };
 
 const MEMORY_SIZE: usize = 30000;

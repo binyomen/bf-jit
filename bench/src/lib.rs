@@ -1,6 +1,6 @@
 use {
     std::{fs, time::Instant},
-    util::{BfError, RunFunction},
+    util::{run::RunFunction, BfError},
 };
 
 #[cfg(target_os = "linux")]
