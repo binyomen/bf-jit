@@ -17,107 +17,107 @@ struct LabelPair {
 }
 
 pub fn compile(program: Program, runtime: &mut Runtime) -> BfResult<CompiledProgram> {
-    let mut ops = Assembler::new()?;
-    let start = ops.offset();
+    let mut assembler = Assembler::new()?;
+    let start = assembler.offset();
 
     // Back up non-volatile registers for the caller.
     if REG_DATA_POINTER_NON_VOLATILE {
-        dasm!(ops
+        dasm!(assembler
             ; push reg_data_ptr
         );
     }
 
     if STACK_OFFSET > 0 {
-        dasm!(ops
+        dasm!(assembler
             ; sub reg_stack_ptr, STACK_OFFSET
         );
     }
 
-    set_data_pointer_initial_value(&mut ops, runtime);
+    set_data_pointer_initial_value(&mut assembler, runtime);
 
     let mut open_bracket_stack = vec![];
 
     for (i, instruction) in program.instructions.into_iter().enumerate() {
         match instruction {
             Instruction::IncPtr => {
-                dasm!(ops
+                dasm!(assembler
                     ; inc reg_data_ptr
                 );
             }
             Instruction::DecPtr => {
-                dasm!(ops
+                dasm!(assembler
                     ; dec reg_data_ptr
                 );
             }
             Instruction::IncData => {
-                dasm!(ops
+                dasm!(assembler
                     ; add BYTE [reg_data_ptr], 1
                 );
             }
             Instruction::DecData => {
-                dasm!(ops
+                dasm!(assembler
                     ; sub BYTE [reg_data_ptr], 1
                 );
             }
             Instruction::Read => {
                 #[cfg(target_arch = "x86_64")]
-                dasm!(ops
+                dasm!(assembler
                     // Reinterpret as i64, using the same bytes as before.
                     ; mov reg_arg1, QWORD runtime as *const Runtime as i64
                     ; mov reg_temp, QWORD Runtime::read as *const () as i64
                 );
                 #[cfg(target_arch = "x86")]
-                dasm!(ops
+                dasm!(assembler
                     // Reinterpret as i32, using the same bytes as before.
                     ; mov reg_arg1, DWORD runtime as *const Runtime as i32
                     ; mov reg_temp, DWORD Runtime::read as *const () as i32
                 );
 
-                dasm!(ops
+                dasm!(assembler
                     ; call reg_temp
                     ; mov BYTE [reg_data_ptr], reg_return
                 );
             }
             Instruction::Write => {
                 #[cfg(target_arch = "x86_64")]
-                dasm!(ops
+                dasm!(assembler
                     // Reinterpret as i64, using the same bytes as before.
                     ; mov reg_arg1, QWORD runtime as *const Runtime as i64
                 );
                 #[cfg(target_arch = "x86")]
-                dasm!(ops
+                dasm!(assembler
                     // Reinterpret as i32, using the same bytes as before.
                     ; mov reg_arg1, DWORD runtime as *const Runtime as i32
                 );
 
-                dasm!(ops
+                dasm!(assembler
                     ; mov reg_arg2, [reg_data_ptr]
                 );
 
                 #[cfg(target_arch = "x86_64")]
-                dasm!(ops
+                dasm!(assembler
                     // Reinterpret as i64, using the same bytes as before.
                     ; mov reg_temp, QWORD Runtime::write as *const () as i64
                 );
                 #[cfg(target_arch = "x86")]
-                dasm!(ops
+                dasm!(assembler
                     // Reinterpret as i32, using the same bytes as before.
                     ; mov reg_temp, DWORD Runtime::write as *const () as i32
                 );
 
-                dasm!(ops
+                dasm!(assembler
                     ; call reg_temp
                 );
             }
             Instruction::JumpIfZero => {
-                let begin_label = ops.new_dynamic_label();
-                let end_label = ops.new_dynamic_label();
+                let begin_label = assembler.new_dynamic_label();
+                let end_label = assembler.new_dynamic_label();
                 open_bracket_stack.push(LabelPair {
                     begin_label,
                     end_label,
                 });
 
-                dasm!(ops
+                dasm!(assembler
                     ; cmp BYTE [reg_data_ptr], 0
                     ; jz =>end_label
                     ; =>begin_label
@@ -131,7 +131,7 @@ pub fn compile(program: Program, runtime: &mut Runtime) -> BfResult<CompiledProg
                     BfError::Bf(format!("Unmatched closing ']' at position {i}."))
                 })?;
 
-                dasm!(ops
+                dasm!(assembler
                     ; cmp BYTE [reg_data_ptr], 0
                     ; jnz =>begin_label
                     ; =>end_label
@@ -141,20 +141,20 @@ pub fn compile(program: Program, runtime: &mut Runtime) -> BfResult<CompiledProg
     }
 
     if STACK_OFFSET > 0 {
-        dasm!(ops
+        dasm!(assembler
             ; add reg_stack_ptr, STACK_OFFSET
         );
     }
 
     if REG_DATA_POINTER_NON_VOLATILE {
-        dasm!(ops
+        dasm!(assembler
             ; pop reg_data_ptr
         );
     }
 
-    dasm!(ops
+    dasm!(assembler
         ; ret
     );
 
-    Ok(CompiledProgram::new(ops.finalize()?, start))
+    Ok(CompiledProgram::new(assembler.finalize()?, start))
 }

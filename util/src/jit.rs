@@ -15,8 +15,8 @@ pub use dynasmrt::x86::Assembler;
 #[cfg(all(any(target_os = "linux", target_os = "macos"), target_arch = "x86_64"))]
 #[macro_export]
 macro_rules! dasm {
-    ($ops:ident $($t:tt)*) => {
-        dynasm!($ops
+    ($assembler:ident $($t:tt)*) => {
+        dynasm!($assembler
             ; .arch x64
             ; .alias reg_stack_ptr, rsp
             ; .alias reg_data_ptr, r13
@@ -37,8 +37,8 @@ pub const STACK_OFFSET: i32 = 0;
 #[cfg(all(any(target_os = "linux", target_os = "macos"), target_arch = "x86"))]
 #[macro_export]
 macro_rules! dasm {
-    ($ops:ident $($t:tt)*) => {
-        dynasm!($ops
+    ($assembler:ident $($t:tt)*) => {
+        dynasm!($assembler
             ; .arch x86
             ; .alias reg_stack_ptr, esp
             ; .alias reg_data_ptr, ebx
@@ -59,8 +59,8 @@ pub const STACK_OFFSET: i32 = 0;
 #[cfg(all(target_os = "windows", target_arch = "x86_64"))]
 #[macro_export]
 macro_rules! dasm {
-    ($ops:ident $($t:tt)*) => {
-        dynasm!($ops
+    ($assembler:ident $($t:tt)*) => {
+        dynasm!($assembler
             ; .arch x64
             ; .alias reg_stack_ptr, rsp
             ; .alias reg_data_ptr, r13
@@ -84,14 +84,14 @@ pub const REG_DATA_POINTER_NON_VOLATILE: bool = true;
 #[cfg(all(target_os = "windows", target_arch = "x86_64"))]
 pub const STACK_OFFSET: i32 = 0x20;
 
-pub fn set_data_pointer_initial_value(ops: &mut Assembler, runtime: &mut Runtime) {
+pub fn set_data_pointer_initial_value(assembler: &mut Assembler, runtime: &mut Runtime) {
     #[cfg(target_arch = "x86_64")]
-    dasm!(ops
+    dasm!(assembler
         // Reinterpret as i64, using the same bytes as before.
         ; mov reg_data_ptr, QWORD runtime.memory_ptr() as i64
     );
     #[cfg(target_arch = "x86")]
-    dasm!(ops
+    dasm!(assembler
         // Reinterpret as i32, using the same bytes as before.
         ; mov reg_data_ptr, DWORD runtime.memory_ptr() as i32
     );
