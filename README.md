@@ -9,6 +9,20 @@ Please see [Benchmarks](#benchmarks) for a performance comparison between all
 implementations. This should demonstrate the advantages of following a JIT-like
 approach when possible.
 
+- [Supported platforms](#supported-platforms)
+- [Implementations](#implementations)
+  - [simpleinterp](#simpleinterp)
+  - [opinterp](#opinterp)
+  - [opinterp2](#opinterp2)
+  - [opinterp3](#opinterp3)
+  - [simplejit](#simplejit)
+  - [opjit](#opjit)
+- [Benchmarks](#benchmarks)
+  - [Linux](#linux)
+  - [Windows](#windows)
+  - [macOS](#macos)
+- [Docs](#docs)
+
 ## Supported platforms
 
 | OS      | Architecture |
