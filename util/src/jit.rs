@@ -7,6 +7,83 @@ use {
     },
 };
 
+#[cfg(target_arch = "x86_64")]
+pub use dynasmrt::x64::Assembler;
+#[cfg(target_arch = "x86")]
+pub use dynasmrt::x86::Assembler;
+
+#[cfg(all(any(target_os = "linux", target_os = "macos"), target_arch = "x86_64"))]
+#[macro_export]
+macro_rules! dasm {
+    ($ops:ident $($t:tt)*) => {
+        dynasm!($ops
+            ; .arch x64
+            ; .alias reg_stack_ptr, rsp
+            ; .alias reg_data_ptr, r13
+            ; .alias reg_arg1, rdi
+            ; .alias reg_arg2, rsi
+            ; .alias reg_temp, r8
+            ; .alias reg_temp_low, r8b
+            ; .alias reg_return, al
+            $($t)*
+        )
+    }
+}
+#[cfg(all(any(target_os = "linux", target_os = "macos"), target_arch = "x86_64"))]
+pub const REG_DATA_POINTER_NON_VOLATILE: bool = true;
+#[cfg(all(any(target_os = "linux", target_os = "macos"), target_arch = "x86_64"))]
+pub const STACK_OFFSET: i32 = 0;
+
+#[cfg(all(any(target_os = "linux", target_os = "macos"), target_arch = "x86"))]
+#[macro_export]
+macro_rules! dasm {
+    ($ops:ident $($t:tt)*) => {
+        dynasm!($ops
+            ; .arch x86
+            ; .alias reg_stack_ptr, esp
+            ; .alias reg_data_ptr, ebx
+            ; .alias reg_arg1, ecx
+            ; .alias reg_arg2, edx
+            ; .alias reg_temp, eax
+            ; .alias reg_temp_low, al
+            ; .alias reg_return, al
+            $($t)*
+        )
+    }
+}
+#[cfg(all(any(target_os = "linux", target_os = "macos"), target_arch = "x86"))]
+pub const REG_DATA_POINTER_NON_VOLATILE: bool = true;
+#[cfg(all(any(target_os = "linux", target_os = "macos"), target_arch = "x86"))]
+pub const STACK_OFFSET: i32 = 0;
+
+#[cfg(all(target_os = "windows", target_arch = "x86_64"))]
+#[macro_export]
+macro_rules! dasm {
+    ($ops:ident $($t:tt)*) => {
+        dynasm!($ops
+            ; .arch x64
+            ; .alias reg_stack_ptr, rsp
+            ; .alias reg_data_ptr, r13
+            ; .alias reg_arg1, rcx
+            ; .alias reg_arg2, rdx
+            ; .alias reg_temp, r8
+            ; .alias reg_temp_low, r8b
+            ; .alias reg_return, al
+            $($t)*
+        )
+    }
+}
+#[cfg(all(target_os = "windows", target_arch = "x86_64"))]
+pub const REG_DATA_POINTER_NON_VOLATILE: bool = true;
+// You need to allocate a shadow space on the stack for Windows function calls.
+// The shadow space must be at least 32 bytes and aligned to 16 bytes, including
+// the return address of any functions we call (8 bytes). Since we push
+// reg_data_ptr onto the stack above, that means we're in alignment if we add
+// reg_data_ptr (8 bytes) + return address (8 bytes) + shadow space (32 bytes) =
+// 48 bytes.
+#[cfg(all(target_os = "windows", target_arch = "x86_64"))]
+pub const STACK_OFFSET: i32 = 0x20;
+
 pub struct CompiledProgram {
     buffer: ExecutableBuffer,
     start: AssemblyOffset,
