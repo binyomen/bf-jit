@@ -1,6 +1,6 @@
 use {
-    crate::error::BfResult,
-    dynasmrt::{dynasm, AssemblyOffset, DynasmApi, ExecutableBuffer},
+    crate::error::{BfError, BfResult},
+    dynasmrt::{dynasm, AssemblyOffset, DynamicLabel, DynasmApi, DynasmLabelApi, ExecutableBuffer},
     std::{
         io::{Read, Write},
         mem,
@@ -30,9 +30,9 @@ macro_rules! dasm {
     }
 }
 #[cfg(all(any(target_os = "linux", target_os = "macos"), target_arch = "x86_64"))]
-pub const REG_DATA_POINTER_NON_VOLATILE: bool = true;
+const REG_DATA_POINTER_NON_VOLATILE: bool = true;
 #[cfg(all(any(target_os = "linux", target_os = "macos"), target_arch = "x86_64"))]
-pub const STACK_OFFSET: i32 = 0;
+const STACK_OFFSET: i32 = 0;
 
 #[cfg(all(any(target_os = "linux", target_os = "macos"), target_arch = "x86"))]
 #[macro_export]
@@ -52,9 +52,9 @@ macro_rules! dasm {
     }
 }
 #[cfg(all(any(target_os = "linux", target_os = "macos"), target_arch = "x86"))]
-pub const REG_DATA_POINTER_NON_VOLATILE: bool = true;
+const REG_DATA_POINTER_NON_VOLATILE: bool = true;
 #[cfg(all(any(target_os = "linux", target_os = "macos"), target_arch = "x86"))]
-pub const STACK_OFFSET: i32 = 0;
+const STACK_OFFSET: i32 = 0;
 
 #[cfg(all(target_os = "windows", target_arch = "x86_64"))]
 #[macro_export]
@@ -74,7 +74,7 @@ macro_rules! dasm {
     }
 }
 #[cfg(all(target_os = "windows", target_arch = "x86_64"))]
-pub const REG_DATA_POINTER_NON_VOLATILE: bool = true;
+const REG_DATA_POINTER_NON_VOLATILE: bool = true;
 // You need to allocate a shadow space on the stack for Windows function calls.
 // The shadow space must be at least 32 bytes and aligned to 16 bytes, including
 // the return address of any functions we call (8 bytes). Since we push
@@ -82,9 +82,27 @@ pub const REG_DATA_POINTER_NON_VOLATILE: bool = true;
 // reg_data_ptr (8 bytes) + return address (8 bytes) + shadow space (32 bytes) =
 // 48 bytes.
 #[cfg(all(target_os = "windows", target_arch = "x86_64"))]
-pub const STACK_OFFSET: i32 = 0x20;
+const STACK_OFFSET: i32 = 0x20;
 
-pub fn set_data_pointer_initial_value(assembler: &mut Assembler, runtime: &mut Runtime) {
+pub struct LabelPair {
+    begin_label: DynamicLabel,
+    end_label: DynamicLabel,
+}
+
+pub fn prologue(assembler: &mut Assembler, runtime: &mut Runtime) {
+    // Back up non-volatile registers for the caller.
+    if REG_DATA_POINTER_NON_VOLATILE {
+        dasm!(assembler
+            ; push reg_data_ptr
+        );
+    }
+
+    if STACK_OFFSET > 0 {
+        dasm!(assembler
+            ; sub reg_stack_ptr, STACK_OFFSET
+        );
+    }
+
     #[cfg(target_arch = "x86_64")]
     dasm!(assembler
         // Reinterpret as i64, using the same bytes as before.
@@ -95,6 +113,114 @@ pub fn set_data_pointer_initial_value(assembler: &mut Assembler, runtime: &mut R
         // Reinterpret as i32, using the same bytes as before.
         ; mov reg_data_ptr, DWORD runtime.memory_ptr() as i32
     );
+}
+
+pub fn epilogue(assembler: &mut Assembler) {
+    if STACK_OFFSET > 0 {
+        dasm!(assembler
+            ; add reg_stack_ptr, STACK_OFFSET
+        );
+    }
+
+    if REG_DATA_POINTER_NON_VOLATILE {
+        dasm!(assembler
+            ; pop reg_data_ptr
+        );
+    }
+
+    dasm!(assembler
+        ; ret
+    );
+}
+
+pub fn call_read(assembler: &mut Assembler, runtime: &mut Runtime) {
+    #[cfg(target_arch = "x86_64")]
+    dasm!(assembler
+        // Reinterpret as i64, using the same bytes as before.
+        ; mov reg_arg1, QWORD runtime as *const Runtime as i64
+        ; mov reg_temp, QWORD Runtime::read as *const () as i64
+    );
+    #[cfg(target_arch = "x86")]
+    dasm!(assembler
+        // Reinterpret as i32, using the same bytes as before.
+        ; mov reg_arg1, DWORD runtime as *const Runtime as i32
+        ; mov reg_temp, DWORD Runtime::read as *const () as i32
+    );
+
+    dasm!(assembler
+        ; call reg_temp
+        ; mov BYTE [reg_data_ptr], reg_return
+    );
+}
+
+pub fn call_write(assembler: &mut Assembler, runtime: &mut Runtime) {
+    #[cfg(target_arch = "x86_64")]
+    dasm!(assembler
+        // Reinterpret as i64, using the same bytes as before.
+        ; mov reg_arg1, QWORD runtime as *const Runtime as i64
+    );
+    #[cfg(target_arch = "x86")]
+    dasm!(assembler
+        // Reinterpret as i32, using the same bytes as before.
+        ; mov reg_arg1, DWORD runtime as *const Runtime as i32
+    );
+
+    dasm!(assembler
+        ; mov reg_arg2, [reg_data_ptr]
+    );
+
+    #[cfg(target_arch = "x86_64")]
+    dasm!(assembler
+        // Reinterpret as i64, using the same bytes as before.
+        ; mov reg_temp, QWORD Runtime::write as *const () as i64
+    );
+    #[cfg(target_arch = "x86")]
+    dasm!(assembler
+        // Reinterpret as i32, using the same bytes as before.
+        ; mov reg_temp, DWORD Runtime::write as *const () as i32
+    );
+
+    dasm!(assembler
+        ; call reg_temp
+    );
+}
+
+pub fn jump_begin(assembler: &mut Assembler, open_bracket_stack: &mut Vec<LabelPair>) {
+    let begin_label = assembler.new_dynamic_label();
+    let end_label = assembler.new_dynamic_label();
+    open_bracket_stack.push(LabelPair {
+        begin_label,
+        end_label,
+    });
+
+    dasm!(assembler
+        ; cmp BYTE [reg_data_ptr], 0
+        ; jz =>end_label
+        ; =>begin_label
+    );
+}
+
+pub fn jump_end(
+    assembler: &mut Assembler,
+    open_bracket_stack: &mut Vec<LabelPair>,
+    instruction_index: usize,
+) -> BfResult<()> {
+    let LabelPair {
+        begin_label,
+        end_label,
+    } = open_bracket_stack.pop().ok_or_else(|| {
+        BfError::Bf(format!(
+            "Unmatched closing ']' at position {instruction_index}."
+        ))
+    })?;
+
+    dasm!(assembler
+        ; cmp BYTE [reg_data_ptr], 0
+        ; jnz =>begin_label
+        ; =>end_label
+    );
+
+    Ok(())
 }
 
 pub struct CompiledProgram {
