@@ -30,6 +30,7 @@ for filename in os.listdir(DATA_DIR):
         xlabel = 'Implementation',
         ylabel = 'Average runtime (ms)',
     )
+    plot.tick_params(axis = 'x', rotation = 30)
 
     # Add values on top of the bars, including percentage difference for all
     # bars after the first.
