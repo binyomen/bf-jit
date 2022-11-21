@@ -125,10 +125,16 @@
 <span id="125">125</span>
 <span id="126">126</span>
 <span id="127">127</span>
+<span id="128">128</span>
+<span id="129">129</span>
+<span id="130">130</span>
 </pre><pre class="rust"><code><span class="kw">use </span>{
     <span class="kw">crate</span>::parser::{Instruction, Program},
     std::io::{Read, Write},
-    util::{unbalanced_wrapping_add, unbalanced_wrapping_sub, BfResult},
+    util::{
+        math::{unbalanced_wrapping_add, unbalanced_wrapping_sub},
+        BfResult,
+    },
 };
 
 <span class="kw">const </span>MEMORY_SIZE: usize = <span class="number">30000</span>;

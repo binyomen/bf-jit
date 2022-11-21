@@ -90,10 +90,16 @@
 <span id="90">90</span>
 <span id="91">91</span>
 <span id="92">92</span>
+<span id="93">93</span>
+<span id="94">94</span>
+<span id="95">95</span>
 </pre><pre class="rust"><code><span class="kw">use </span>{
     <span class="kw">crate</span>::parser::{Instruction, Program},
     std::io::{Read, Write},
-    util::{unbalanced_wrapping_add, unbalanced_wrapping_sub, BfResult},
+    util::{
+        math::{unbalanced_wrapping_add, unbalanced_wrapping_sub},
+        BfResult,
+    },
 };
 
 <span class="kw">const </span>MEMORY_SIZE: usize = <span class="number">30000</span>;

@@ -22,17 +22,13 @@
 <span id="22">22</span>
 <span id="23">23</span>
 <span id="24">24</span>
-<span id="25">25</span>
-<span id="26">26</span>
 </pre><pre class="rust"><code><span class="kw">use </span>{
-    runtime::Runtime,
     std::io::{Read, Write},
-    util::BfResult,
+    util::{jit::Runtime, BfResult},
 };
 
 <span class="kw">mod </span>compiler;
 <span class="kw">mod </span>parser;
-<span class="kw">mod </span>runtime;
 
 <span class="attribute">#[cfg(not(any(
     all(target_os = <span class="string">&quot;linux&quot;</span>, target_arch = <span class="string">&quot;x86_64&quot;</span>),
