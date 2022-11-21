@@ -1,11 +1,26 @@
 use {
-    crate::compiler::CompiledProgram,
+    crate::error::BfResult,
+    dynasmrt::{AssemblyOffset, ExecutableBuffer},
     std::{
         io::{Read, Write},
         mem,
     },
-    util::BfResult,
 };
+
+pub struct CompiledProgram {
+    buffer: ExecutableBuffer,
+    start: AssemblyOffset,
+}
+
+impl CompiledProgram {
+    pub fn new(buffer: ExecutableBuffer, start: AssemblyOffset) -> Self {
+        CompiledProgram { buffer, start }
+    }
+
+    pub fn function_ptr(&self) -> *const () {
+        self.buffer.ptr(self.start) as *const ()
+    }
+}
 
 #[cfg(target_arch = "x86_64")]
 type AsmEntryPoint = extern "C" fn();

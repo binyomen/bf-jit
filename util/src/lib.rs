@@ -1,4 +1,5 @@
 mod error;
+pub mod jit;
 mod math;
 mod run;
 

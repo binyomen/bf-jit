@@ -1,10 +1,10 @@
 use {
-    crate::{
-        parser::{Instruction, Program},
-        runtime::Runtime,
+    crate::parser::{Instruction, Program},
+    dynasmrt::{dynasm, DynasmApi, DynasmLabelApi},
+    util::{
+        jit::{CompiledProgram, Runtime},
+        BfError, BfResult,
     },
-    dynasmrt::{dynasm, AssemblyOffset, DynasmApi, DynasmLabelApi, ExecutableBuffer},
-    util::{BfError, BfResult},
 };
 
 #[cfg(target_arch = "x86_64")]
@@ -80,17 +80,6 @@ const REG_DATA_POINTER_NON_VOLATILE: bool = true;
 // 48 bytes.
 #[cfg(all(target_os = "windows", target_arch = "x86_64"))]
 const STACK_OFFSET: i32 = 0x20;
-
-pub struct CompiledProgram {
-    buffer: ExecutableBuffer,
-    start: AssemblyOffset,
-}
-
-impl CompiledProgram {
-    pub fn function_ptr(&self) -> *const () {
-        self.buffer.ptr(self.start) as *const ()
-    }
-}
 
 struct LabelPair {
     begin_label: dynasmrt::DynamicLabel,
@@ -331,8 +320,5 @@ pub fn compile(program: Program, runtime: &mut Runtime) -> BfResult<CompiledProg
         ; ret
     );
 
-    Ok(CompiledProgram {
-        buffer: ops.finalize()?,
-        start,
-    })
+    Ok(CompiledProgram::new(ops.finalize()?, start))
 }

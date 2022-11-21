@@ -1,12 +1,10 @@
 use {
-    runtime::Runtime,
     std::io::{Read, Write},
-    util::BfResult,
+    util::{jit::Runtime, BfResult},
 };
 
 mod compiler;
 mod parser;
-mod runtime;
 
 #[cfg(not(any(
     all(target_os = "linux", target_arch = "x86_64"),
