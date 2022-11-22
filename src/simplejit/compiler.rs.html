@@ -59,6 +59,30 @@
 <span id="59">59</span>
 <span id="60">60</span>
 <span id="61">61</span>
+<span id="62">62</span>
+<span id="63">63</span>
+<span id="64">64</span>
+<span id="65">65</span>
+<span id="66">66</span>
+<span id="67">67</span>
+<span id="68">68</span>
+<span id="69">69</span>
+<span id="70">70</span>
+<span id="71">71</span>
+<span id="72">72</span>
+<span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
+<span id="76">76</span>
+<span id="77">77</span>
+<span id="78">78</span>
+<span id="79">79</span>
+<span id="80">80</span>
+<span id="81">81</span>
+<span id="82">82</span>
+<span id="83">83</span>
+<span id="84">84</span>
+<span id="85">85</span>
 </pre><pre class="rust"><code><span class="kw">use </span>{
     <span class="kw">crate</span>::parser::{Instruction, Program},
     dynasmrt::{dynasm, DynasmApi},
@@ -82,24 +106,48 @@
     <span class="kw">for </span>(i, instruction) <span class="kw">in </span>program.instructions.into_iter().enumerate() {
         <span class="kw">match </span>instruction {
             Instruction::IncPtr =&gt; {
-                <span class="macro">dasm!</span>(assembler
+                <span class="attribute">#[cfg(any(target_arch = <span class="string">&quot;x86_64&quot;</span>, target_arch = <span class="string">&quot;x86&quot;</span>))]
+                </span><span class="macro">dasm!</span>(assembler
                     ; inc reg_data_ptr
                 );
+                <span class="attribute">#[cfg(target_arch = <span class="string">&quot;aarch64&quot;</span>)]
+                </span><span class="macro">dasm!</span>(assembler
+                    ; add reg_data_ptr, reg_data_ptr, <span class="number">1
+                </span>);
             }
             Instruction::DecPtr =&gt; {
-                <span class="macro">dasm!</span>(assembler
+                <span class="attribute">#[cfg(any(target_arch = <span class="string">&quot;x86_64&quot;</span>, target_arch = <span class="string">&quot;x86&quot;</span>))]
+                </span><span class="macro">dasm!</span>(assembler
                     ; dec reg_data_ptr
                 );
+                <span class="attribute">#[cfg(target_arch = <span class="string">&quot;aarch64&quot;</span>)]
+                </span><span class="macro">dasm!</span>(assembler
+                    ; sub reg_data_ptr, reg_data_ptr, <span class="number">1
+                </span>);
             }
             Instruction::IncData =&gt; {
-                <span class="macro">dasm!</span>(assembler
+                <span class="attribute">#[cfg(any(target_arch = <span class="string">&quot;x86_64&quot;</span>, target_arch = <span class="string">&quot;x86&quot;</span>))]
+                </span><span class="macro">dasm!</span>(assembler
                     ; add BYTE [reg_data_ptr], <span class="number">1
                 </span>);
+                <span class="attribute">#[cfg(target_arch = <span class="string">&quot;aarch64&quot;</span>)]
+                </span><span class="macro">dasm!</span>(assembler
+                    ; ldrb reg_temp_low, [reg_data_ptr]
+                    ; add reg_temp_low, reg_temp_low, <span class="number">1
+                    </span>; strb reg_temp_low, [reg_data_ptr]
+                );
             }
             Instruction::DecData =&gt; {
-                <span class="macro">dasm!</span>(assembler
+                <span class="attribute">#[cfg(any(target_arch = <span class="string">&quot;x86_64&quot;</span>, target_arch = <span class="string">&quot;x86&quot;</span>))]
+                </span><span class="macro">dasm!</span>(assembler
                     ; sub BYTE [reg_data_ptr], <span class="number">1
                 </span>);
+                <span class="attribute">#[cfg(target_arch = <span class="string">&quot;aarch64&quot;</span>)]
+                </span><span class="macro">dasm!</span>(assembler
+                    ; ldrb reg_temp_low, [reg_data_ptr]
+                    ; sub reg_temp_low, reg_temp_low, <span class="number">1
+                    </span>; strb reg_temp_low, [reg_data_ptr]
+                );
             }
             Instruction::Read =&gt; {
                 call_read(<span class="kw-2">&amp;mut </span>assembler, runtime);
