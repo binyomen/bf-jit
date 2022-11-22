@@ -1,6 +1,6 @@
 use {
     std::io::{Read, Write},
-    util::{jit::Runtime, BfResult},
+    util::{asm::Runtime, BfResult},
 };
 
 mod compiler;

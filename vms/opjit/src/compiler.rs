@@ -2,12 +2,11 @@ use {
     crate::parser::{Instruction, Program},
     dynasmrt::{dynasm, DynasmApi, DynasmLabelApi},
     util::{
-        dasm,
-        jit::{
+        asm::{
             call_read, call_write, epilogue, jump_begin, jump_end, prologue, Assembler,
             CompiledProgram, Runtime,
         },
-        BfResult,
+        dasm, BfResult,
     },
 };
 
