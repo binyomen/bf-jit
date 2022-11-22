@@ -32,6 +32,12 @@ approach when possible.
 | Windows | x86-64       |
 | macOS   | x86-64       |
 
+## Benchmark programs
+
+We benchmark two [BF] programs: one which writes an image of a Mandelbrot set to
+stdout, and another which factors a number passed to stdin. For the
+factorization program we pass in the large prime 179424691.
+
 ## Implementations
 
 Code for each implementation can be found in the `vms` directory.
