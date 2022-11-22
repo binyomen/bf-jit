@@ -33,11 +33,17 @@ approach when possible.
 | Windows | x86-64       |
 | macOS   | x86-64       |
 
-## Benchmark programs
+## Benchmarking
 
 We benchmark two [BF] programs: one which writes an image of a Mandelbrot set to
 stdout, and another which factors a number passed to stdin. For the
 factorization program we pass in the large prime 179424691.
+
+We currently don't run benchmarks on aarch64 builds, even though those builds
+are supported and tested in this repo. This is because the emulation we're
+running them under is very slow and adds hours to the CI runtime. We can add
+aarch64 benchmarking back once [#5631: Support Linux ARM64 build images] is
+completed.
 
 ## Implementations
 
@@ -145,16 +151,6 @@ We saw this provide around 60–70% speedups over [simplejit].
 
 ![Linux i686 factorization perf graph](https://binyomen.github.io/bf-jit/img/linux-i686-factor.png)
 
-#### aarch64
-
-##### Mandelbrot generator
-
-![Linux aarch64 Mandelbrot generator perf graph](https://binyomen.github.io/bf-jit/img/linux-aarch64-mandelbrot.png)
-
-##### Factorization
-
-![Linux aarch64 factorization perf graph](https://binyomen.github.io/bf-jit/img/linux-aarch64-factor.png)
-
 ### Windows
 
 #### x86-64
@@ -194,6 +190,7 @@ We saw this provide around 60–70% speedups over [simplejit].
 <!-- GENERAL -->
 [Adventures in JIT compilation]: https://eli.thegreenplace.net/2017/adventures-in-jit-compilation-part-1-an-interpreter
 [BF]: https://en.wikipedia.org/wiki/Brainfuck
+[#5631: Support Linux ARM64 build images]: https://github.com/actions/runner-images/issues/5631
 
 <!-- IMPLEMENTATIONS -->
 [Adventures in JIT compilation § A simple interpreter]: https://eli.thegreenplace.net/2017/adventures-in-jit-compilation-part-1-an-interpreter/#a-simple-interpreter

@@ -93,11 +93,11 @@ jobs:
       run: cross test --target ${{ matrix.target }} --all-features -vv
 
     - name: Generate benchmark data
-      if: matrix.rust == 'stable'
+      if: matrix.rust == 'stable' && matrix.target != 'aarch64-unknown-linux-gnu'
       run: cross run --target ${{ matrix.target }} --release -vv
 
     - name: Add the benchmark data to the `bench-data` artifact
-      if: matrix.rust == 'stable'
+      if: matrix.rust == 'stable' && matrix.target != 'aarch64-unknown-linux-gnu'
       uses: actions/upload-artifact@v3
       with:
         name: bench-data
