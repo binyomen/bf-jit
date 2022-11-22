@@ -59,17 +59,15 @@
 <span id="59">59</span>
 <span id="60">60</span>
 <span id="61">61</span>
-<span id="62">62</span>
 </pre><pre class="rust"><code><span class="kw">use </span>{
     <span class="kw">crate</span>::parser::{Instruction, Program},
     dynasmrt::{dynasm, DynasmApi},
     util::{
-        dasm,
-        jit::{
+        asm::{
             call_read, call_write, epilogue, jump_begin, jump_end, prologue, Assembler,
             CompiledProgram, Runtime,
         },
-        BfResult,
+        dasm, BfResult,
     },
 };
 

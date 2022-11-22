@@ -143,17 +143,15 @@
 <span id="143">143</span>
 <span id="144">144</span>
 <span id="145">145</span>
-<span id="146">146</span>
 </pre><pre class="rust"><code><span class="kw">use </span>{
     <span class="kw">crate</span>::parser::{Instruction, Program},
     dynasmrt::{dynasm, DynasmApi, DynasmLabelApi},
     util::{
-        dasm,
-        jit::{
+        asm::{
             call_read, call_write, epilogue, jump_begin, jump_end, prologue, Assembler,
             CompiledProgram, Runtime,
         },
-        BfResult,
+        dasm, BfResult,
     },
 };
 

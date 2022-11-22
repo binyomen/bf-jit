@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":[["BfError",""]],"macro":[["dasm",""]],"mod":[["error",""],["jit",""],["math",""],["run",""]],"type":[["BfResult",""]]};
+window.SIDEBAR_ITEMS = {"enum":[["BfError",""]],"macro":[["dasm",""]],"mod":[["asm",""],["error",""],["math",""],["run",""]],"type":[["BfResult",""]]};
