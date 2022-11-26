@@ -100,13 +100,13 @@ We saw this provide around 30–45% speedups over [opinterp2].
 
 This loosely follows the implementation at [Adventures in JIT compilation
 § simpleasmjit—JIT with sane instruction encoding]. This is basically an
-implementation of [simpleinterp], but rather than interpreting bytecode it
-compiles the [BF] directly to machine code and runs it. It does this by
-translating each [BF] instruction to an assembly instruction or sequence of
-instructions, compiling the assembly to machine code with [dynasm-rs], writing
-the machine code to a writable memory map, marking the memory map executable and
-read-only, and calling the executable memory as if it were a function. The data
-pointer is stored in a register and the [BF] memory is allocated by Rust.
+implementation of [opinterp], but rather than interpreting bytecode it compiles
+the [BF] directly to machine code and runs it. It does this by translating each
+[BF] instruction to an assembly instruction or sequence of instructions,
+compiling the assembly to machine code with [dynasm-rs], writing the machine
+code to a writable memory map, marking the memory map executable and read-only,
+and calling the executable memory as if it were a function. The data pointer is
+stored in a register and the [BF] memory is allocated by Rust.
 
 This requires some `unsafe` Rust code, since we need to make sure the assembly
 doesn't do anything unsound. For example, it must make sure to follow the
